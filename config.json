@@ -1,0 +1,114 @@
+{
+  "pageTitle": "MSU Denver Digital Signage",
+  "displayName": "Insert Name Here's Office",
+  "timezone": "America/Denver",
+  "logoImage": "image/logo.png",
+  "weather": {
+    "enabled": true,
+    "label": "Denver",
+    "latitude": 39.7392,
+    "longitude": -104.9903,
+    "unit": "fahrenheit",
+    "timezone": "America/Denver"
+  },
+  "quotes": {
+    "items": [
+      {
+        "text": "The question of whether computers can think is like the question whether submarines can swim.",
+        "author": "Edsger Dijkstra"
+      },
+      {
+        "text": "There are only two kinds of languages: the ones people complain about and the ones nobody uses.",
+        "author": "Bjarne Stroustrup"
+      },
+      {
+        "text": "The good thing about reinventing the wheel is that you can get a round one.",
+        "author": "Douglas Crockford"
+      },
+      {
+        "text": "There are two ways to write error-free programs. Only the third one works.",
+        "author": ""
+      },
+      {
+        "text": "C++ is an octopus made by nailing extra legs onto a dog.",
+        "author": "Steve Taylor"
+      },
+      {
+        "text": "The great thing about standards is that there's so many to choose from.",
+        "author": ""
+      },
+      {
+        "text": "Don't worry if it doesn't work right. If everything did, you'd be out of a job.",
+        "author": ""
+      },
+      {
+        "text": "Nothing is as permanent as a temporary solution that works.",
+        "author": ""
+      },
+      {
+        "text": "If one programmer can do it in one week, then 2 programmers can do it in 2 weeks.",
+        "author": ""
+      },
+      {
+        "text": "There are 2 types of people. Those who do backups and those who will do backups.",
+        "author": ""
+      },
+      {
+        "text": "Hardware eventually fails. Software eventually works.",
+        "author": ""
+      },
+      {
+        "text": "Programming is the art of adding bugs to an empty text file.",
+        "author": ""
+      },
+      {
+        "text": "Give a man a program, and he'll be frustrated for a day. Teach a man to program, and he'll be frustrated for a lifetime.",
+        "author": ""
+      },
+      {
+        "text": "In theory, theory and practice are the same. In practice they are different.",
+        "author": ""
+      },
+      {
+        "text": "Months of testing and bug fixes can save you hours of planning.",
+        "author": ""
+      },
+      {
+        "text": "We do things not because they are easy, but because we thought they would be easy.",
+        "author": ""
+      },
+      {
+        "text": "I don't always test my code but when I do, it's in production.",
+        "author": ""
+      },
+      {
+        "text": "Don't ever be so arrogant as to believe your code is correct.",
+        "author": ""
+      }
+    ]
+  },
+  "rss": {
+    "feeds": [
+      {
+        "feedUrl": "https://news.google.com/rss/search?q=computing+profession&hl=en-US&gl=US&ceid=US:en",
+        "sourceName": "Computing Profession"
+      },
+      {
+        "feedUrl": "https://news.google.com/rss/search?q=computer+science+theory&hl=en-US&gl=US&ceid=US:en",
+        "sourceName": "CS Theory"
+      },
+      {
+        "feedUrl": "https://news.google.com/rss/search?q=computing+applications&hl=en-US&gl=US&ceid=US:en",
+        "sourceName": "Computing Applications"
+      }
+    ],
+    "items": 4,
+    "titleLines": 2,
+    "summaryLength": 170,
+    "refreshMinutes": 5,
+    "proxies": [
+      "https://api.codetabs.com/v1/proxy?quest={url}",
+      "https://api.allorigins.win/raw?url={url}"
+    ]
+  }
+}
