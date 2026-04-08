@@ -1,5 +1,5 @@
 :root {
-  --page-bg: #0d0d0d;
+  --page-bg: #fff200;
   --panel-bg: #1a001a;
   --panel-border: #ff00ff;
   --shadow: none;
@@ -38,7 +38,7 @@ body {
 .signage-stage {
   width: min(100vw, calc(100vh * 0.76));
   aspect-ratio: 19 / 30;
-  background: #0d0d0d;
+  background: var(--page-bg);
   display: grid;
   grid-template-rows: var(--hero-height) 1fr;
   overflow: hidden;
