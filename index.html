@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Signage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="signage-shell">
+    <section class="signage-stage">
+      <header class="hero" id="hero">
+        <div class="hero__top-row">
+          <div class="hero__logo-wrap">
+            <img id="logo" class="hero__logo" alt="Organization logo">
+          </div>
+          <div class="hero__identity">
+            <h1 id="display-name" class="hero__name">Your Name</h1>
+            <section class="availability-card panel" id="availability-card" hidden>
+              <div class="availability-card__label">Availability</div>
+              <div id="availability-status" class="availability-card__status"></div>
+              <div id="availability-detail" class="availability-card__detail"></div>
+            </section>
+          </div>
+        </div>
+
+        <div class="hero__widgets">
+          <section class="clock-card panel">
+            <div class="analog-clock" aria-label="Current time">
+              <div class="analog-clock__face"></div>
+              <div class="analog-clock__hand analog-clock__hand--hour" id="hour-hand"></div>
+              <div class="analog-clock__hand analog-clock__hand--minute" id="minute-hand"></div>
+              <div class="analog-clock__hand analog-clock__hand--second" id="second-hand"></div>
+              <div class="analog-clock__center"></div>
+              <div class="analog-clock__ticks" id="clock-ticks"></div>
+            </div>
+            <div class="clock-card__digital">
+              <div id="time-text" class="clock-card__time">00:00</div>
+              <div id="date-text" class="clock-card__date">Friday, April 3</div>
+            </div>
+          </section>
+
+          <section class="weather-card panel" id="weather-card">
+            <div class="weather-card__icon" id="weather-icon" aria-hidden="true">&#9728;</div>
+            <div class="weather-card__details">
+              <div id="weather-label" class="weather-card__label">Weather</div>
+              <div id="weather-temp" class="weather-card__temp">--&deg;</div>
+              <div id="weather-desc" class="weather-card__desc">Loading forecast...</div>
+            </div>
+          </section>
+        </div>
+
+        <section class="quote-card panel" id="quote-card">
+          <blockquote id="quote-text" class="quote-card__text"></blockquote>
+          <div id="quote-author" class="quote-card__author"></div>
+        </section>
+      </header>
+
+      <section class="rss-section">
+        <div class="section-title">HEADLINES</div>
+        <div class="rss-list" id="rss-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <template id="rss-item-template">
+    <article class="rss-item panel">
+      <div class="rss-item__body">
+        <div class="rss-item__headline">
+          <span class="rss-item__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <circle cx="12" cy="12" r="12"></circle>
+              <circle class="rss-item__icon-dot" cx="7.1" cy="16.9" r="1.9"></circle>
+              <path class="rss-item__icon-arc" d="M6.5 11.5a6 6 0 0 1 6 6"></path>
+              <path class="rss-item__icon-arc" d="M6.5 7a10.5 10.5 0 0 1 10.5 10.5"></path>
+            </svg>
+          </span>
+          <h2 class="rss-item__title"></h2>
+        </div>
+        <div class="rss-item__meta">
+          <span class="rss-item__source"></span>
+          <span class="rss-item__date"></span>
+        </div>
+        <p class="rss-item__summary"></p>
+      </div>
+      <div class="rss-item__qr">
+        <img class="rss-item__qr-image" alt="QR code for article">
+        <div class="rss-item__qr-label">Scan Article</div>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
