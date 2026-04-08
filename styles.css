@@ -84,6 +84,18 @@ body {
   box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
 }
 
+.hero__corner-logo {
+  position: absolute;
+  top: var(--page-padding);
+  right: var(--page-padding);
+  z-index: 2;
+  width: clamp(4.8rem, 9vw, 7.5rem);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
+}
+
 .hero__top-row {
   display: flex;
   align-items: flex-start;
