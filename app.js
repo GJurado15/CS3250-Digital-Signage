@@ -298,8 +298,30 @@ async function fetchRssFeed(feed, proxyTemplates) {
         throw new Error(`RSS request failed with status ${response.status}`);
       }
 
-      const xmlText = await response.text();
-      const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+      const text = await response.text();
+
+      // Try JSON first (rss2json format)
+      try {
+        const json = JSON.parse(text);
+        if (json.status === "ok" && Array.isArray(json.items)) {
+          return json.items.map((item) => {
+            const parsedDate = Date.parse(item.pubDate);
+            return {
+              title: normalizeFeedText(item.title || "Untitled"),
+              source: feed.sourceName,
+              dateValue: item.pubDate,
+              timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
+              link: item.link || "",
+              description: normalizeFeedText(item.description || item.content || "")
+            };
+          });
+        }
+      } catch (_) {
+        // Not JSON, fall through to XML parsing
+      }
+
+      // Try XML (standard RSS / Atom)
+      const xml = new DOMParser().parseFromString(text, "text/xml");
       const parseError = xml.querySelector("parsererror");
       if (parseError) {
         throw new Error("Proxy returned invalid XML");

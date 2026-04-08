@@ -1,6 +1,6 @@
 {
   "pageTitle": "MSU Denver Digital Signage",
-  "displayName": "Insert Name Here's Office",
+  "displayName": "Dr. Steve Beāty",
   "timezone": "America/Denver",
   "logoImage": "image/logo.png",
   "weather": {
@@ -107,6 +107,7 @@
     "summaryLength": 170,
     "refreshMinutes": 5,
     "proxies": [
+      "https://api.rss2json.com/v1/api.json?rss_url={url}",
       "https://api.codetabs.com/v1/proxy?quest={url}",
       "https://api.allorigins.win/raw?url={url}"
     ]
