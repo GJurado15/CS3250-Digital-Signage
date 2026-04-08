@@ -1,15 +1,15 @@
 :root {
-  --page-bg: #1f2020;
-  --panel-bg: #3c3c3c;
-  --panel-border: rgba(255, 255, 255, 0.1);
-  --shadow: 0 1.1rem 2.8rem rgba(0, 0, 0, 0.35);
-  --text-primary: #ffffff;
-  --text-secondary: #cfcfcf;
-  --accent: #d8d8d8;
-  --accent-warm: #a8a8a8;
+  --page-bg: #0d0d0d;
+  --panel-bg: #1a001a;
+  --panel-border: #ff00ff;
+  --shadow: none;
+  --text-primary: #00ffff;
+  --text-secondary: #ff00ff;
+  --accent: #ffff00;
+  --accent-warm: #ff6600;
   --hero-height: 21%;
   --page-padding: 2.1%;
-  --panel-radius: 1.6rem;
+  --panel-radius: 0;
 }
 
 * {
@@ -25,7 +25,7 @@ body {
 }
 
 body {
-  font-family: "Ubuntu", sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 .signage-shell {
@@ -38,11 +38,12 @@ body {
 .signage-stage {
   width: min(100vw, calc(100vh * 0.76));
   aspect-ratio: 19 / 30;
-  background: #262626;
+  background: #0d0d0d;
   display: grid;
   grid-template-rows: var(--hero-height) 1fr;
   overflow: hidden;
-  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.45);
+  box-shadow: none;
+  border: 3px solid #00ffff;
 }
 
 .panel {
@@ -50,15 +51,13 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: var(--panel-radius);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(0.4rem);
 }
 
 .hero {
   position: relative;
   padding: var(--page-padding);
-  background:
-    linear-gradient(180deg, rgba(20, 20, 24, 0.42), rgba(20, 20, 24, 0.58)),
-    url("image/background.jpg") center / cover no-repeat;
+  background: #0d0020;
+  border-bottom: 3px solid #ff00ff;
   overflow: hidden;
 }
 
@@ -314,7 +313,7 @@ body {
 
 .rss-section {
   padding: 3.1% 4.6% 1.8%;
-  background: linear-gradient(180deg, #2d2d2d 0%, #242424 100%);
+  background: #0d0020;
   overflow: hidden;
 }
 
