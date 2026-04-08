@@ -72,6 +72,18 @@ body {
   z-index: 1;
 }
 
+.hero__show-title {
+  position: absolute;
+  top: var(--page-padding);
+  left: var(--page-padding);
+  z-index: 2;
+  width: clamp(5.5rem, 10vw, 8.5rem);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
+}
+
 .hero__top-row {
   display: flex;
   align-items: flex-start;
