@@ -144,8 +144,15 @@ body {
   margin-top: 0.18cqw;
   font-size: 2.2cqw;
   line-height: 1.1;
-  color: var(--accent);
   text-shadow: 0 0.18cqw 0.52cqw rgba(0, 0, 0, 0.4);
+}
+
+.availability-card--out .availability-card__status {
+  color: var(--accent);
+}
+
+.availability-card--in .availability-card__status {
+  color: #4caf50;
 }
 
 .availability-card__detail {

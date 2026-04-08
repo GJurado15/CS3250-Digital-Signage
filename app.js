@@ -81,6 +81,10 @@ function renderAvailability(availability = {}) {
   availabilityStatus.textContent = availability.status || "Available";
   availabilityDetail.textContent = availability.detail || "";
   availabilityDetail.hidden = !availability.detail;
+
+  const isIn = /in\s+office|available/i.test(availability.status || "");
+  availabilityCard.classList.toggle("availability-card--in", isIn);
+  availabilityCard.classList.toggle("availability-card--out", !isIn);
 }
 
 function renderQuote(quotesConfig = {}) {
@@ -390,15 +394,20 @@ function summarize(htmlLikeText, maxLength) {
     return plainText;
   }
 
-  return `${plainText.slice(0, maxLength - 3).trim()}...`;
+  const cut = plainText.slice(0, maxLength - 3);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
 }
 
 function clampLines(text, maxCharacters) {
   const normalized = text.replace(/\s+/g, " ").trim();
-  if (normalized.length <= maxCharacters * 28) {
+  const limit = maxCharacters * 28;
+  if (normalized.length <= limit) {
     return normalized;
   }
-  return `${normalized.slice(0, maxCharacters * 28 - 3).trim()}...`;
+  const cut = normalized.slice(0, limit - 3);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
 }
 
 function formatFeedDate(dateValue) {
