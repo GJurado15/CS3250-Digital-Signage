@@ -81,6 +81,10 @@ function renderAvailability(availability = {}) {
   availabilityStatus.textContent = availability.status || "Available";
   availabilityDetail.textContent = availability.detail || "";
   availabilityDetail.hidden = !availability.detail;
+
+  const isIn = /in\s+office|available/i.test(availability.status || "");
+  availabilityCard.classList.toggle("availability-card--in", isIn);
+  availabilityCard.classList.toggle("availability-card--out", !isIn);
 }
 
 function renderQuote(quotesConfig = {}) {
@@ -298,8 +302,30 @@ async function fetchRssFeed(feed, proxyTemplates) {
         throw new Error(`RSS request failed with status ${response.status}`);
       }
 
-      const xmlText = await response.text();
-      const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+      const text = await response.text();
+
+      // Try JSON first (rss2json format)
+      try {
+        const json = JSON.parse(text);
+        if (json.status === "ok" && Array.isArray(json.items)) {
+          return json.items.map((item) => {
+            const parsedDate = Date.parse(item.pubDate);
+            return {
+              title: normalizeFeedText(item.title || "Untitled"),
+              source: feed.sourceName,
+              dateValue: item.pubDate,
+              timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
+              link: item.link || "",
+              description: normalizeFeedText(item.description || item.content || "")
+            };
+          });
+        }
+      } catch (_) {
+        // Not JSON, fall through to XML parsing
+      }
+
+      // Try XML (standard RSS / Atom)
+      const xml = new DOMParser().parseFromString(text, "text/xml");
       const parseError = xml.querySelector("parsererror");
       if (parseError) {
         throw new Error("Proxy returned invalid XML");
@@ -368,15 +394,20 @@ function summarize(htmlLikeText, maxLength) {
     return plainText;
   }
 
-  return `${plainText.slice(0, maxLength - 3).trim()}...`;
+  const cut = plainText.slice(0, maxLength - 3);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
 }
 
 function clampLines(text, maxCharacters) {
   const normalized = text.replace(/\s+/g, " ").trim();
-  if (normalized.length <= maxCharacters * 28) {
+  const limit = maxCharacters * 28;
+  if (normalized.length <= limit) {
     return normalized;
   }
-  return `${normalized.slice(0, maxCharacters * 28 - 3).trim()}...`;
+  const cut = normalized.slice(0, limit - 3);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
 }
 
 function formatFeedDate(dateValue) {
