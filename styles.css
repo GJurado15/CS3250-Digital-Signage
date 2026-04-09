@@ -1,9 +1,17 @@
-/* iteration 1 — blow it up */
+/* VINTAGE SECTOR DIAL — Mode 1 */
 
 :root {
-  --accent: #c8102e;
-  --gold: #f0a500;
-  --page-bg: #0a0a14;
+  --case:       #1c1a14;
+  --dial:       #f0e8d0;
+  --dial-mid:   #e6dcc0;
+  --dial-outer: #252018;
+  --brass:      #c8a848;
+  --brass-dim:  #8a7230;
+  --steel:      #1c2540;
+  --ink:        #1a1608;
+  --cream:      #f0e8d0;
+  --lume:       #d4c070;
+  --page-bg:    #111008;
 }
 
 * { box-sizing: border-box; }
@@ -12,7 +20,7 @@ html, body {
   margin: 0;
   min-height: 100%;
   background: var(--page-bg);
-  color: #fff;
+  color: var(--cream);
 }
 
 body {
@@ -24,71 +32,53 @@ body {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(ellipse at 20% 10%, rgba(200,16,46,0.15) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 90%, rgba(100,30,200,0.2) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 50%, #0e0820 0%, #02020a 70%);
+  background: radial-gradient(ellipse at 50% 50%, #1e1a0e 0%, #0c0a06 100%);
 }
 
 .signage-stage {
   width: min(100vw, calc(100vh * 19 / 30));
   aspect-ratio: 19 / 30;
-  background: #09090f;
+  background: var(--case);
   display: grid;
-  grid-template-rows: 4.5% 43% 1fr;
+  grid-template-rows: 4.5% 48% 1fr;
   overflow: hidden;
-  border-radius: 2.5cqw;
-  filter: contrast(1.04) saturate(1.12);
+  border-radius: 2cqw;
+  filter: contrast(1.03) saturate(0.92);
   box-shadow:
-    0 0 0 0.18cqw rgba(240,165,0,0.22),
-    0 0 0 0.55cqw rgba(0,0,0,0.8),
-    0 8cqw 32cqw rgba(0,0,0,0.98),
-    0 0 8cqw rgba(200,16,46,0.15),
-    0 0 20cqw rgba(100,30,180,0.08);
+    0 0 0 0.28cqw rgba(200,168,72,0.55),
+    0 0 0 0.65cqw #09080504,
+    0 0 0 1cqw rgba(200,168,72,0.18),
+    0 10cqw 40cqw rgba(0,0,0,0.99);
   container-type: inline-size;
   container-name: stage;
-  --panel-radius: 1.2cqw;
-  --shadow: 0 0.6cqw 2cqw rgba(0,0,0,0.6);
+  --panel-radius: 0.8cqw;
 }
 
-/* ── TOP BAR ── */
+/* ── TOP BAR — watch case top ── */
 .top-bar {
-  background: linear-gradient(90deg, #200a0a 0%, #1a0a2e 50%, #200a0a 100%);
-  border-bottom: 0.18cqw solid var(--accent);
-  border-top: 0.08cqw solid rgba(240,165,0,0.15);
+  background: linear-gradient(180deg, #2e2a1e 0%, #1e1c14 100%);
+  border-bottom: 0.18cqw solid rgba(200,168,72,0.5);
+  border-top: 0.08cqw solid rgba(200,168,72,0.25);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 3cqw;
-  position: relative;
-}
-
-.top-bar::after {
-  content: "";
-  position: absolute;
-  bottom: -0.5cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20%;
-  height: 0.5cqw;
-  background: radial-gradient(ellipse, rgba(240,165,0,0.5), transparent 80%);
 }
 
 .top-bar__school {
-  font-size: 1.4cqw;
+  font-size: 1.05cqw;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold);
-  text-shadow: 0 0 1.5cqw rgba(240,165,0,0.4);
+  color: var(--brass);
 }
 
 .top-bar__dept {
-  font-size: 1.2cqw;
+  font-size: 0.95cqw;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+  color: rgba(200,168,72,0.45);
   display: flex;
   align-items: center;
   gap: 1.2cqw;
@@ -97,39 +87,70 @@ body {
 .top-bar__dept::before {
   content: "";
   width: 0.08cqw;
-  height: 1.8cqw;
-  background: rgba(255,255,255,0.2);
+  height: 1.6cqw;
+  background: rgba(200,168,72,0.3);
 }
 
 .panel {
-  background: rgba(255,255,255,0.04);
-  border: 0.08cqw solid rgba(255,255,255,0.1);
-  border-top-color: rgba(255,255,255,0.15);
+  background: transparent;
+  border: none;
   border-radius: var(--panel-radius);
-  backdrop-filter: blur(2cqw);
+  backdrop-filter: none;
 }
 
-/* ── HERO: vivid photo, minimal overlay ── */
+/* ── HERO — the cream dial face ── */
 .hero {
   position: relative;
-  padding: 2.4%;
+  padding: 2cqw 3cqw 2cqw;
+  justify-content: space-evenly;
   background:
-    radial-gradient(ellipse at 85% 5%, rgba(200,16,46,0.2) 0%, transparent 40%),
-    radial-gradient(ellipse at 10% 90%, rgba(80,20,160,0.3) 0%, transparent 45%),
-    linear-gradient(180deg,
-      rgba(6,4,16,0.5) 0%,
-      rgba(6,4,16,0.0) 20%,
-      rgba(6,4,16,0.0) 42%,
-      rgba(6,4,16,0.75) 72%,
-      rgba(6,4,16,1) 100%),
-    url("image/background.jpg") center 30% / cover no-repeat;
+    /* Crystal shadow vignette */
+    radial-gradient(ellipse at 50% 50%,
+      transparent 60%,
+      rgba(0,0,0,0.07) 80%,
+      rgba(0,0,0,0.22) 100%),
+    /* Sunburst fan from 12-o'clock — fills upper field */
+    repeating-conic-gradient(
+      from 0deg at 50% -20%,
+      transparent 0deg,
+      transparent 5.5deg,
+      rgba(26,22,8,0.018) 5.5deg,
+      rgba(26,22,8,0.018) 6deg
+    ),
+    /* Fine guilloché rings */
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent 0%,
+      transparent 4%,
+      rgba(0,0,0,0.018) 4%,
+      rgba(0,0,0,0.018) 4.15%),
+    /* Dial base */
+    linear-gradient(155deg, #f8f0da 0%, #ede4c6 40%, #f2e9cd 70%, #e6dcbc 100%);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* Inset shadow — dial sits below the crystal */
+  box-shadow: inset 0 0.3cqw 2cqw rgba(0,0,0,0.18), inset 0 0 0.5cqw rgba(0,0,0,0.1);
 }
 
 .hero > * { position: relative; z-index: 1; }
+
+/* Center dial "applied text" — like AUTOMATIC / SWISS MADE on a watch */
+.hero::after {
+  content: "COMPUTER SCIENCE";
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.15cqw;
+  letter-spacing: 0.44em;
+  font-weight: 700;
+  color: rgba(26,22,8,0.2);
+  text-transform: uppercase;
+  white-space: nowrap;
+  z-index: 0;
+  pointer-events: none;
+}
 
 .hero__top-row {
   display: flex;
@@ -138,165 +159,209 @@ body {
 }
 
 .hero__logo-wrap {
-  width: 38%;
+  width: 28%;
   display: flex;
   flex-direction: column;
-  gap: 1cqw;
+  gap: 0.8cqw;
   align-items: flex-start;
 }
 
 .hero__logo {
-  width: 80%;
+  width: 72%;
   height: auto;
   display: block;
-  filter: drop-shadow(0 0.4cqw 1.2cqw rgba(0,0,0,0.7));
+  filter: saturate(0) brightness(0.2) sepia(1) hue-rotate(25deg);
+  opacity: 0.45;
 }
 
-/* Floating frosted nameplate — right side */
+/* Nameplate — signed dial, right side */
 .hero__nameplate {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.8cqw;
-  padding: 1.2cqw 1.6cqw;
-  background: rgba(10,8,22,0.72);
-  border: 0.1cqw solid rgba(240,165,0,0.15);
-  border-top-color: rgba(240,165,0,0.3);
-  border-radius: 1.4cqw;
-  backdrop-filter: blur(2.5cqw);
-  box-shadow: 0 0.5cqw 2cqw rgba(0,0,0,0.5), inset 0 0.08cqw 0 rgba(240,165,0,0.1);
+  gap: 0.5cqw;
+  padding: 0;
+  background: none;
+  border: none;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
-.hero__name {
-  margin: 0;
-  font-size: 4.2cqw;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--gold);
-  text-shadow: 0 0 2cqw rgba(240,165,0,0.35);
-  line-height: 1;
-  text-align: right;
+/* Professor title — watch reference line above the name */
+.hero__nameplate::before {
+  content: "PROFESSOR OF COMPUTER SCIENCE";
+  font-size: 0.88cqw;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(26,22,8,0.28);
+  order: -1;
   white-space: nowrap;
 }
 
-/* ── AVAILABILITY: gold badge ── */
+/* Thin rule below name — like a signed-dial separator */
+.hero__name::after {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 0.08cqw;
+  background: rgba(200,168,72,0.4);
+  margin: 0.4cqw 0 0 auto;
+}
+
+/* Professor name — signed dial typography */
+.hero__name {
+  margin: 0;
+  font-size: 4.8cqw;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  /* Subtle engraved feel */
+  text-shadow: 0 0.08cqw 0 rgba(255,255,255,0.6), 0 -0.05cqw 0 rgba(0,0,0,0.12);
+}
+
+/* ── AVAILABILITY — subdial badge ── */
 .availability-card {
   display: inline-flex;
   align-items: center;
-  gap: 0.6cqw;
-  padding: 0.4cqw 1.1cqw;
-  background: rgba(6,4,16,0.88);
-  border: 0.1cqw solid rgba(255,255,255,0.12);
+  gap: 0.55cqw;
+  padding: 0.3cqw 0.9cqw;
+  background: rgba(26,22,8,0.07);
+  border: 0.1cqw solid rgba(26,22,8,0.18);
   border-radius: 99cqw;
   width: fit-content;
+  box-shadow: inset 0 0.1cqw 0.3cqw rgba(0,0,0,0.08), 0 0.05cqw 0 rgba(255,255,255,0.5);
 }
 
 .availability-card__label { display: none; }
 
 .availability-card__status {
-  font-size: 1.35cqw;
+  font-size: 1.15cqw;
   font-weight: 600;
   line-height: 1;
   display: flex;
   align-items: center;
-  gap: 0.5cqw;
+  gap: 0.45cqw;
+  color: var(--ink);
 }
 
 .availability-card__status::before {
   content: "";
   display: inline-block;
-  width: 0.65cqw;
-  height: 0.65cqw;
+  width: 0.55cqw;
+  height: 0.55cqw;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.availability-card--out .availability-card__status { color: #ff7070; }
+.availability-card--out .availability-card__status { color: #8b1a1a; }
 .availability-card--out .availability-card__status::before {
-  background: #ff5050;
-  box-shadow: 0 0 0.9cqw rgba(255,60,60,0.8);
+  background: #c03030;
+  box-shadow: 0 0 0.5cqw rgba(192,48,48,0.5);
 }
 
-.availability-card--in .availability-card__status { color: #5dde8a; }
+.availability-card--in .availability-card__status { color: #1a5420; }
 .availability-card--in .availability-card__status::before {
-  background: #4ade80;
-  box-shadow: 0 0 0.9cqw rgba(74,222,128,0.8);
+  background: #2a8c44;
+  box-shadow: 0 0 0.5cqw rgba(42,140,68,0.5);
 }
 
 .availability-card__detail {
-  font-size: 1.15cqw;
-  color: rgba(255,255,255,0.4);
-  border-left: 0.08cqw solid rgba(255,255,255,0.15);
-  padding-left: 0.8cqw;
+  font-size: 1.05cqw;
+  color: rgba(26,22,8,0.45);
+  border-left: 0.08cqw solid rgba(26,22,8,0.18);
+  padding-left: 0.7cqw;
 }
 
-/* ── QUOTE: dramatic, left-heavy ── */
+/* ── QUOTE — complication window ── */
 .quote-card {
-  width: 100%;
-  padding: 1.8cqw 3cqw 1.8cqw 5.5cqw;
+  width: 82%;
+  margin: 0 auto;
+  padding: 1.4cqw 2.6cqw;
   position: relative;
   display: grid;
-  gap: 0.5cqw;
-  background: linear-gradient(135deg, rgba(40,15,70,0.88) 0%, rgba(10,6,22,0.82) 100%);
-  border-left: 0.4cqw solid var(--gold);
-  border-top: 0.08cqw solid rgba(240,165,0,0.25);
-  border-bottom: 0.08cqw solid rgba(240,165,0,0.1);
-  border-right: none;
-  border-radius: 0;
-  box-shadow: inset 1cqw 0 4cqw rgba(240,165,0,0.05);
-  backdrop-filter: blur(3cqw);
+  gap: 0.4cqw;
+  background: rgba(26,22,8,0.06);
+  border: 0.14cqw solid rgba(26,22,8,0.22);
+  border-radius: 0.5cqw;
+  text-align: center;
+  /* Inset complication look */
+  box-shadow:
+    inset 0 0.25cqw 1cqw rgba(0,0,0,0.12),
+    0 0.12cqw 0 rgba(255,255,255,0.6),
+    0 0 0 0.06cqw rgba(200,168,72,0.12);
 }
 
 .quote-card::before {
   content: "\201C";
   position: absolute;
-  left: 0.5cqw;
-  top: -0.5cqw;
-  font-size: 11cqw;
-  font-weight: 900;
+  left: 0.6cqw;
+  top: -0.6cqw;
+  font-size: 7cqw;
+  font-weight: 700;
   font-family: "Playfair Display", Georgia, serif;
   line-height: 0.85;
-  color: var(--gold);
-  opacity: 0.55;
+  color: var(--brass);
+  opacity: 0.22;
   pointer-events: none;
 }
 
 .quote-card__text {
   margin: 0;
-  font-size: 2.3cqw;
+  font-size: 1.85cqw;
   font-style: italic;
   font-weight: 400;
   font-family: "Playfair Display", Georgia, serif;
-  line-height: 1.45;
-  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+  color: rgba(26,22,8,0.78);
 }
 
 .quote-card__author {
-  font-size: 1.1cqw;
+  font-size: 0.92cqw;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: rgba(26,22,8,0.38);
 }
 
 .quote-card__author:not(:empty)::before { content: "— "; opacity: 0.6; letter-spacing: 0; }
 
+/* Complication identifier label */
+.quote-card::after {
+  content: "THOUGHT OF THE DAY";
+  font-size: 0.72cqw;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(26,22,8,0.22);
+  text-align: center;
+  margin-top: 0.15cqw;
+  padding-top: 0.6cqw;
+  border-top: 0.06cqw solid rgba(26,22,8,0.1);
+}
+
 /* ── WIDGETS ROW ── */
 .hero__widgets {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 4%;
+  gap: 6%;
   position: relative;
 }
 
 .hero__identity { display: none; }
 
-/* ── CLOCK ── */
+/* ── CLOCK — SECTOR DIAL ── */
 .clock-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4%;
+  gap: 1.5cqw;
   background: transparent;
   border: 0;
   box-shadow: none;
@@ -307,209 +372,334 @@ body {
 
 .analog-clock {
   position: relative;
-  width: 20cqw;
+  width: 26cqw;
   aspect-ratio: 1;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 28%, #221848, #06040e 70%);
+  /* THE SECTOR DIAL: wider cream center, elegant narrow outer ring */
+  background:
+    /* Sunburst lines on the cream field */
+    repeating-conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      transparent 4deg,
+      rgba(0,0,0,0.016) 4deg,
+      rgba(0,0,0,0.016) 5deg
+    ),
+    radial-gradient(circle,
+      #faf2e0 0%,
+      #f4ecd4 60%,
+      #eee0bc 65%,
+      #2c2618 67%,    /* hard edge — narrower outer sector ring */
+      #221e12 82%,
+      #181510 100%);
   box-shadow:
-    0 0 0 0.18cqw rgba(240,165,0,0.55),
-    0 0 0 0.45cqw rgba(0,0,0,0.7),
-    0 0 0 0.65cqw rgba(240,165,0,0.15),
-    0 2cqw 6cqw rgba(0,0,0,0.8),
-    inset 0 0.8cqw 2cqw rgba(0,0,0,0.6),
-    inset 0 -0.3cqw 0.6cqw rgba(240,165,0,0.06);
+    /* Brass bezel */
+    0 0 0 0.28cqw rgba(200,168,72,0.7),
+    0 0 0 0.55cqw #0c0a08,
+    0 0 0 0.85cqw rgba(200,168,72,0.22),
+    /* Depth */
+    0 2cqw 8cqw rgba(0,0,0,0.7),
+    /* Crystal convex highlight */
+    inset 0 -0.3cqw 1.2cqw rgba(0,0,0,0.2),
+    inset 0 0.6cqw 1.5cqw rgba(255,255,255,0.12);
+}
+
+/* Watchmaker text in outer ring — just above 6 o'clock */
+.analog-clock::after {
+  content: "MSU · DENVER";
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9cqw;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245,233,190,0.55);
+  white-space: nowrap;
+  z-index: 8;
+  pointer-events: none;
+}
+
+/* Defining ring at the cream/dark sector boundary — double-line bezel inset */
+.analog-clock::before {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  inset: 17%;   /* matches new ~67% radius boundary */
+  border: 0.12cqw solid rgba(200,168,72,0.45);
+  box-shadow:
+    0 0 0 0.18cqw rgba(0,0,0,0.4),
+    0 0 0 0.32cqw rgba(200,168,72,0.18),
+    inset 0 0 0 0.18cqw rgba(0,0,0,0.3);
+  z-index: 6;
+  pointer-events: none;
 }
 
 .analog-clock__face,
 .analog-clock__ticks,
 .analog-clock__hand,
-.analog-clock__center {
+.analog-clock__center,
+.analog-clock__numerals {
   position: absolute;
   inset: 0;
 }
 
+/* Crystal dome — convex glass highlight */
+.analog-clock__face {
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 33% 28%,
+      rgba(255,255,255,0.22) 0%,
+      rgba(255,255,255,0.08) 20%,
+      transparent 50%),
+    radial-gradient(ellipse at 70% 80%,
+      rgba(255,255,255,0.04) 0%,
+      transparent 40%);
+  z-index: 20;
+  pointer-events: none;
+}
+
 .analog-clock__ticks { border-radius: 50%; }
 
+/* Minor tick marks — cream on dark ring */
 .analog-clock__ticks span {
   display: block;
   position: absolute;
-  width: 1.2%;
-  height: 7%;
-  background: rgba(240,165,0,0.4);
+  width: 0.7%;
+  height: 4%;
+  background: rgba(240,228,190,0.6);
   left: 50%;
-  top: 7%;
-  transform-origin: 50% 450%;
+  top: 3%;
+  transform-origin: 50% 1175%;   /* anchors rotation at clock center */
   transform: translateX(-50%) rotate(calc(var(--tick-angle)));
   border-radius: 1px;
 }
 
-.analog-clock__ticks span:nth-child(3n + 1) {
-  height: 11%;
-  top: 5%;
-  background: rgba(240,165,0,0.85);
-  width: 1.8%;
-  transform-origin: 50% 318%;
+/* Major tick marks (every 5th = hour positions) — brass */
+.analog-clock__ticks span:nth-child(5n + 1) {
+  height: 7%;
+  top: 1%;
+  width: 1.3%;
+  background: rgba(200,168,72,0.95);
+  transform-origin: 50% 700%;
 }
 
+/* 12 o'clock crown — elongated and bright */
+.analog-clock__ticks span:nth-child(1) {
+  height: 9%;
+  top: 0%;
+  width: 2%;
+  background: rgba(200,168,72,1);
+  box-shadow: 0 0 0.4cqw rgba(200,168,72,0.6);
+  transform-origin: 50% 556%;
+}
+
+/* Hands — blued steel */
 .analog-clock__hand {
   inset: 50% auto auto 50%;
   transform-origin: bottom center;
-  opacity: 0.97;
 }
 
 .analog-clock__hand--hour {
-  width: 2.8%;
-  height: 24%;
-  background: #e8e8e8;
-  margin-left: -1.4%;
-  margin-top: -24%;
-  border-radius: 1.4% 1.4% 0 0;
+  width: 4%;
+  height: 25%;
+  /* Polished blued steel — brighter highlight stripe */
+  background: linear-gradient(90deg, #1a2038 0%, #3a4e80 40%, #1c2848 60%, #0e1428 100%);
+  margin-left: -2%;
+  margin-top: -25%;
+  border-radius: 2% 2% 0 0;
+  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.7);
 }
 
 .analog-clock__hand--minute {
-  width: 2.2%;
-  height: 37%;
-  background: #ffffff;
-  margin-left: -1.1%;
-  margin-top: -37%;
-  border-radius: 1.1% 1.1% 0 0;
+  width: 2.8%;
+  height: 38%;
+  background: linear-gradient(90deg, #1a2038 0%, #3a4e80 40%, #1c2848 60%, #0e1428 100%);
+  margin-left: -1.4%;
+  margin-top: -38%;
+  border-radius: 1.4% 1.4% 0 0;
+  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.7);
 }
 
+/* Classic red seconds hand — with counterbalance tail */
 .analog-clock__hand--second {
   width: 0.65%;
-  height: 40%;
-  background: var(--gold);
+  height: 48%;
+  background: linear-gradient(180deg, #c8102e 0%, #c8102e 80%, rgba(200,16,46,0.4) 100%);
   margin-left: -0.325%;
-  margin-top: -40%;
+  margin-top: -42%;
+  border-radius: 0.5%;
+  box-shadow: 0 0.1cqw 0.5cqw rgba(200,16,46,0.5);
 }
 
+/* Center jewel — brass cap */
 .analog-clock__center {
   inset: 50% auto auto 50%;
-  width: 9%;
-  height: 9%;
-  margin-left: -4.5%;
-  margin-top: -4.5%;
-  background: var(--gold);
-  box-shadow: 0 0 0 0.25cqw rgba(255,255,255,0.15), 0 0 1cqw rgba(240,165,0,0.6);
+  width: 7%;
+  height: 7%;
+  margin-left: -3.5%;
+  margin-top: -3.5%;
+  background: radial-gradient(circle at 35% 30%, #e8c860 0%, #c8a848 50%, #9a7830 100%);
+  box-shadow:
+    0 0 0 0.15cqw rgba(0,0,0,0.4),
+    0 0 0.5cqw rgba(200,168,72,0.3),
+    inset 0 0.1cqw 0.2cqw rgba(255,255,255,0.35);
+  border-radius: 50%;
+  z-index: 10;
+  position: absolute;
+}
+
+/* Arabic numerals in the outer sector ring */
+.analog-clock__numerals {
   border-radius: 50%;
 }
 
-.clock-card__digital { min-width: 0; }
+.analog-clock__numerals span {
+  position: absolute;
+  font-size: 2cqw;
+  font-weight: 800;
+  font-family: "Inter", sans-serif;
+  color: rgba(245,233,195,0.95);
+  line-height: 1;
+  text-align: center;
+  /* CSS trig — positions each numeral in the outer sector ring */
+  left: calc(50% + 36% * sin(calc(var(--h) * 30deg)));
+  top: calc(50% - 36% * cos(calc(var(--h) * 30deg)));
+  transform: translate(-50%, -50%);
+  letter-spacing: -0.03em;
+}
+
+/* Non-cardinal numerals slightly de-emphasized */
+.analog-clock__numerals span:not([style*="--h:12"]):not([style*="--h:3"]):not([style*="--h:6"]):not([style*="--h:9"]) {
+  font-size: 1.6cqw;
+  font-weight: 600;
+  color: rgba(225,210,165,0.72);
+}
+
+/* ── DIGITAL TIME — below clock face ── */
+.clock-card__digital {
+  min-width: 0;
+  text-align: center;
+}
 
 .clock-card__time {
-  font-size: 5.5cqw;
-  font-weight: 100;
-  letter-spacing: -0.05em;
+  font-size: 4.2cqw;
+  font-weight: 200;
+  letter-spacing: -0.04em;
   line-height: 1;
-  color: #fff;
+  color: var(--ink);
   white-space: nowrap;
-  text-shadow: 0 0 2cqw rgba(255,255,255,0.2);
+  text-align: center;
 }
 
 .clock-card__date {
-  margin-top: 0.5cqw;
-  font-size: 1.2cqw;
+  margin-top: 0.4cqw;
+  font-size: 1cqw;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: rgba(240,165,0,0.5);
+  letter-spacing: 0.2em;
+  color: rgba(26,22,8,0.35);
+  text-align: center;
 }
 
-/* ── WEATHER PILL ── */
+/* ── WEATHER — circular subdial complication ── */
 .weather-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.2cqw;
-  padding: 1cqw 2cqw;
-  background: linear-gradient(135deg, rgba(40,15,70,0.92), rgba(20,8,40,0.88));
-  border: 0.12cqw solid rgba(240,165,0,0.3);
-  border-top-color: rgba(240,165,0,0.5);
-  border-radius: 99cqw;
-  backdrop-filter: blur(2cqw);
-  box-shadow: 0 0.5cqw 2cqw rgba(0,0,0,0.5), 0 0 1cqw rgba(240,165,0,0.08);
-  width: auto;
+  justify-content: center;
+  gap: 0.3cqw;
+  padding: 1.8cqw;
+  width: 12cqw;
+  height: 12cqw;
+  background:
+    radial-gradient(circle at 40% 35%, #f8f0dc 0%, #eee4c6 60%, #e6dab8 100%);
+  border: 0.12cqw solid rgba(26,22,8,0.14);
+  border-radius: 50%;
   position: relative;
   z-index: 1;
+  box-shadow:
+    0 0 0 0.18cqw rgba(200,168,72,0.45),
+    0 0 0 0.35cqw #0c0a08,
+    0 0 0 0.5cqw rgba(200,168,72,0.15),
+    0 1cqw 3cqw rgba(0,0,0,0.4),
+    inset 0 0.25cqw 1cqw rgba(0,0,0,0.1);
 }
 
-.weather-card__icon { font-size: 3.5cqw; line-height: 1; }
+.weather-card__icon { font-size: 2.8cqw; line-height: 1; }
 
 .weather-card__details {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .weather-card__label {
-  font-size: 1.1cqw;
+  font-size: 0.8cqw;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(240,165,0,0.55);
+  letter-spacing: 0.2em;
+  color: rgba(26,22,8,0.35);
   line-height: 1;
+  text-align: center;
 }
 
 .weather-card__temp {
-  font-size: 3.6cqw;
+  font-size: 3cqw;
   font-weight: 200;
   letter-spacing: -0.04em;
   line-height: 1;
-  color: #fff;
+  color: var(--ink);
+  text-align: center;
 }
 
 .weather-card__desc {
-  font-size: 1.1cqw;
+  font-size: 0.92cqw;
   font-weight: 500;
-  color: rgba(255,255,255,0.45);
+  color: rgba(26,22,8,0.4);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  text-align: center;
 }
 
-/* ── RSS SECTION ── */
+/* ── RSS SECTION — movement caseback ── */
 .rss-section {
   display: flex;
   flex-direction: column;
   background:
-    repeating-linear-gradient(
-      135deg,
-      transparent,
-      transparent 40cqw,
-      rgba(255,255,255,0.012) 40cqw,
-      rgba(255,255,255,0.012) 41cqw
-    ),
-    linear-gradient(180deg, #0f0c1e 0%, #07060d 55%, #090008 100%);
+    linear-gradient(180deg, #211d12 0%, #1a1810 55%, #151210 100%);
   overflow: hidden;
-  border-top: 0.22cqw solid var(--accent);
+  border-top: 0.22cqw solid rgba(200,168,72,0.5);
 }
 
 .section-title {
   flex-shrink: 0;
-  font-size: 1.05cqw;
+  font-size: 0.9cqw;
   font-weight: 900;
   text-align: center;
-  letter-spacing: 0.55em;
+  letter-spacing: 0.6em;
   text-transform: uppercase;
-  color: var(--gold);
-  background: #0d0b18;
-  padding: 1.1% 4%;
+  color: var(--brass);
+  background: #1e1c12;
+  padding: 1% 4%;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 0.08cqw solid rgba(240,165,0,0.15);
+  border-bottom: 0.08cqw solid rgba(200,168,72,0.2);
 }
 
 .section-title::before, .section-title::after {
   content: "";
   flex: 1;
   height: 0.08cqw;
-  background: linear-gradient(90deg, transparent, rgba(240,165,0,0.4));
+  background: linear-gradient(90deg, transparent, rgba(200,168,72,0.45));
   margin: 0 2cqw;
 }
-
 .section-title::after {
-  background: linear-gradient(270deg, transparent, rgba(240,165,0,0.4));
+  background: linear-gradient(270deg, transparent, rgba(200,168,72,0.45));
 }
 
 .rss-list {
@@ -525,19 +715,17 @@ body {
   min-height: 0;
   align-items: stretch;
   overflow: hidden;
-  border-left: none;
-  border-bottom: 0.08cqw solid rgba(255,255,255,0.05);
+  border-bottom: 0.08cqw solid rgba(200,168,72,0.1);
   background: transparent;
 }
 
 .rss-item:nth-child(even) {
-  background: rgba(30,20,60,0.3);
+  background: rgba(200,168,72,0.018);
 }
 
 .rss-item:first-child {
-  background: linear-gradient(90deg, rgba(240,165,0,0.09) 0%, transparent 60%);
-  border-left: 0.5cqw solid var(--gold);
-  box-shadow: inset 2cqw 0 4cqw rgba(240,165,0,0.04);
+  background: linear-gradient(90deg, rgba(200,168,72,0.08) 0%, transparent 65%);
+  border-left: 0.45cqw solid var(--brass);
 }
 
 .rss-item:last-child { border-bottom: none; }
@@ -548,12 +736,12 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 3% 2.4% 3% 4%;
-  gap: 0.6cqw;
+  gap: 0.5cqw;
   position: relative;
   overflow: hidden;
 }
 
-.rss-item:first-child .rss-item__body { padding-left: 3.6%; }
+.rss-item:first-child .rss-item__body { padding-left: 3.2%; }
 
 .rss-item:nth-child(1) .rss-item__body::before { content: "1"; }
 .rss-item:nth-child(2) .rss-item__body::before { content: "2"; }
@@ -562,20 +750,21 @@ body {
 
 .rss-item__body::before {
   position: absolute;
-  right: 1cqw;
+  right: 0.5cqw;
   top: 50%;
   transform: translateY(-50%);
   font-size: 14cqw;
   font-weight: 900;
   line-height: 1;
-  color: rgba(255,255,255,0.025);
+  color: rgba(200,168,72,0.035);
   pointer-events: none;
   letter-spacing: -0.05em;
   z-index: 0;
+  font-family: "Inter", sans-serif;
 }
 
 .rss-item:first-child .rss-item__body::before {
-  color: rgba(240,165,0,0.06);
+  color: rgba(200,168,72,0.07);
 }
 
 .rss-item__headline,
@@ -587,23 +776,23 @@ body {
 
 .rss-item__title {
   margin: 0;
-  font-size: 2.5cqw;
+  font-size: 2.4cqw;
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #f0f0f4;
+  color: var(--cream);
 }
 
 .rss-item:first-child .rss-item__title {
-  font-size: 3cqw;
+  font-size: 2.9cqw;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  color: #f8f0da;
 }
 
 .rss-item:not(:first-child) .rss-item__title {
-  font-size: 2.35cqw;
+  font-size: 2.2cqw;
   font-weight: 600;
-  color: rgba(240,240,244,0.78);
+  color: rgba(240,232,208,0.68);
 }
 
 .rss-item:not(:first-child) .rss-item__summary { display: none; }
@@ -612,41 +801,41 @@ body {
   display: flex;
   align-items: center;
   gap: 1.2cqw;
-  font-size: 1.1cqw;
+  font-size: 1.05cqw;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .rss-item__source {
-  background: rgba(240,165,0,0.12);
-  border: 0.1cqw solid rgba(240,165,0,0.35);
-  color: rgba(240,165,0,0.9);
-  padding: 0.2cqw 0.8cqw;
-  border-radius: 0.4cqw;
-  font-size: 1.05cqw;
+  background: rgba(200,168,72,0.1);
+  border: 0.1cqw solid rgba(200,168,72,0.28);
+  color: rgba(200,168,72,0.82);
+  padding: 0.2cqw 0.7cqw;
+  border-radius: 0.3cqw;
+  font-size: 1cqw;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 
 .rss-item:first-child .rss-item__source {
-  background: rgba(240,165,0,0.15);
-  border-color: rgba(240,165,0,0.5);
-  color: var(--gold);
+  background: rgba(200,168,72,0.14);
+  border-color: rgba(200,168,72,0.48);
+  color: var(--brass);
 }
 
 .rss-item__date {
-  font-size: 1.05cqw;
+  font-size: 1cqw;
   font-weight: 600;
-  color: rgba(255,255,255,0.25);
+  color: rgba(240,232,208,0.2);
   font-variant-numeric: tabular-nums;
 }
 
 .rss-item__summary {
   margin: 0;
-  font-size: 1.38cqw;
+  font-size: 1.35cqw;
   font-weight: 400;
   line-height: 1.5;
-  color: rgba(180,176,200,0.8);
+  color: rgba(240,232,208,0.5);
   overflow: hidden;
 }
 
@@ -658,7 +847,7 @@ body {
   gap: 0.4cqw;
   width: 9cqw;
   padding: 0 1.5cqw 0 1.2cqw;
-  border-left: 0.08cqw solid rgba(255,255,255,0.05);
+  border-left: 0.08cqw solid rgba(200,168,72,0.1);
   flex-shrink: 0;
 }
 
@@ -666,14 +855,14 @@ body {
   width: 100%;
   aspect-ratio: 1;
   object-fit: contain;
-  background: #fff;
-  border-radius: 0.5cqw;
+  background: var(--cream);
+  border-radius: 0.4cqw;
   padding: 0.3cqw;
 }
 
 .rss-item__qr-image--empty {
-  background: rgba(255,255,255,0.06);
-  border: 0.08cqw solid rgba(255,255,255,0.1);
+  background: rgba(200,168,72,0.06);
+  border: 0.08cqw solid rgba(200,168,72,0.12);
 }
 
 .rss-item__qr-label {
@@ -681,6 +870,6 @@ body {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.2);
+  color: rgba(200,168,72,0.22);
   text-align: center;
 }

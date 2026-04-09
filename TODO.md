@@ -4,6 +4,22 @@ This document explains how this project was built and how a future AI agent shou
 
 ---
 
+## Active Design Objective — Vintage Watch Theme
+
+**Goal:** Transform the display into a vintage watch aesthetic. Not a copy of any specific watch — but CSS/SVG-native archetypes of major watch genres that can eventually transition between modes on a timer.
+
+**The four planned modes:**
+1. **Sector Dial** — 1930s–40s American. Two-tone concentric rings, railroad tick marks, bold Arabic numerals. Carry the ring language into RSS and weather cards.
+2. **Dress Watch** — Patek-inspired. Cream/ivory dial, thin gold indices, Playfair Display numerals, extreme elegance and whitespace.
+3. **Diver / Tool Watch** — Submariner-inspired. Matte black, aged cream lume plots, bold bezel ring, high contrast, purposeful.
+4. **Flieger / Pilot** — WWI aviation instrument. Dark grey, oversized Arabic numerals, triangle at 12, ultra-legible, no decoration for its own sake.
+
+**Why no real watch assets:** Watch brands fiercely protect IP. No public API or database of clean dial/hand/case layers exists. CSS/SVG archetypes are sharper at 1080×1800 anyway.
+
+**Agent instructions:** Start with Sector Dial as Mode 1. Redesign the *entire* layout — clock, RSS, weather, nameplate, shell — in that watch's visual language. Use the screenshot loop aggressively. Once Mode 1 is locked, implement a JS-driven theme switcher that rotates modes on a timer.
+
+---
+
 ## What This Project Is
 
 A browser-based digital signage kiosk display designed for a professor's office (Dr. Steve Beaty, MSU Denver CS Department). It runs fullscreen on a Raspberry Pi at 1080×1800 resolution. Everything is static HTML/CSS/JS — no build step, no framework.

@@ -144,9 +144,9 @@ function startClock(timezone) {
 
 function buildClockTicks() {
   const fragment = document.createDocumentFragment();
-  for (let index = 0; index < 12; index += 1) {
+  for (let index = 0; index < 60; index += 1) {
     const tick = document.createElement("span");
-    tick.style.setProperty("--tick-angle", `${index * 30}deg`);
+    tick.style.setProperty("--tick-angle", `${index * 6}deg`);
     fragment.appendChild(tick);
   }
   clockTicks.appendChild(fragment);
