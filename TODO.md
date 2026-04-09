@@ -1,58 +1,155 @@
-# Digital Signage — Fix & Improvement Plan
-> Branch: Dustin-Branch-#1 (based on main after PR #1 merge)
+# Digital Signage — AI Agent Guide
+
+This document explains how this project was built and how a future AI agent should continue working on it.
 
 ---
 
-## Completed
+## What This Project Is
 
-### Part 1 — Hero Layout ✅
-- [x] Raised `--hero-height` from `21%` to `42%`
-- [x] Removed absolute positioning from `.hero__widgets` and `.quote-card`
-- [x] Restructured hero as flexbox column (`justify-content: space-between`)
-- [x] Moved quote card between top-row and widgets so nothing overlaps
-- [x] Strengthened hero bottom gradient for smooth fade into RSS section
+A browser-based digital signage kiosk display designed for a professor's office (Dr. Steve Beaty, MSU Denver CS Department). It runs fullscreen on a Raspberry Pi at 1080×1800 resolution. Everything is static HTML/CSS/JS — no build step, no framework.
 
-### Part 2 — RSS Feeds ✅
-- [x] Diagnosed broken proxies: `codetabs.com` 301, `allorigins.win` 19s timeout
-- [x] Added `rss2json` as primary proxy (200 OK in ~0.8s)
-- [x] Updated `fetchRssFeed()` in `app.js` to parse both JSON (rss2json) and XML
-
-### Part 3 — Visual / UX Polish ✅
-- [x] Clock hands now visible: hour `#e0e0e0`, minute `#ffffff`
-- [x] Analog clock sized to `20cqw`, ring added via `box-shadow`
-- [x] `HEADLINES` heading reduced from `clamp(2.4rem...)` to `2.2cqw`
-- [x] Fixed placeholder display name → `Dr. Steve Beāty`
-- [x] All small text sizes bumped to readable `cqw` values
-
-### Universal Scaling Refactor ✅
-- [x] All `vw` → `cqw` (container query width, relative to stage)
-- [x] All `rem` and `px` sizes → `cqw` equivalents
-- [x] `--panel-radius` and `--shadow` moved into `.signage-stage` scope
-- [x] All `clamp()` removed — fixed-ratio kiosk doesn't need bounds
-- [x] Stage width formula fixed: `0.76` → `calc(19/30)`
-- [x] Stale `@media (max-width: 900px)` block removed
-
-### Part 4 — Quality of Life ✅
-- [x] Availability card detail added: "Back Monday at 9:00 AM"
-- [x] MSU Denver red `#c8102e` applied: second hand, clock center dot, RSS icons, availability status, HEADLINES underline, quote card left border
-- [x] Hero spacing tightened (42% height, gradient handles visual weight)
-- [x] Committed to `Dustin-Branch-#1`
-- [x] Pushed to remote
+**Files that matter:**
+- `index.html` — structure, rarely needs changing
+- `styles.css` — where all the design work happens
+- `app.js` — runtime logic (clock, weather, RSS, quotes, availability)
+- `config.json` — all configurable content (name, quotes, RSS feeds, weather)
+- `availability.json` — professor's in/out-of-office status (edit this to change status)
 
 ---
 
-## Self-Screenshot Workflow
-Claude can self-screenshot using headless Chromium to iterate without manual input:
+## How to Run It
+
 ```bash
-chromium-browser --headless --screenshot=/tmp/signage-preview.png \
-  --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=8000 \
-  http://127.0.0.1:8000/
+# Start a local server (from the project root)
+python3 -m http.server 8000
+
+# Verify it's up
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/
 ```
 
 ---
 
-## Still To Do (Future)
-- [ ] Article titles truncate mid-word — tune `titleLines` value in `config.json`
-- [ ] Add "In Office" green state to availability card (currently only handles "Out of Office")
-- [ ] Replace placeholder quotes with professor/CS-department-relevant content
-- [ ] Open PR from `Dustin-Branch-#1` into `main`
+## The Screenshot Iteration Loop
+
+This is the most powerful way to improve the UI. The core idea: take a headless screenshot, look at it, make changes, repeat. Claude Code can do this autonomously without any human in the loop.
+
+**The command:**
+```bash
+chromium-browser --headless --screenshot=/tmp/s.png \
+  --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=8000 \
+  http://127.0.0.1:8000/ 2>/dev/null
+```
+
+Then read the screenshot:
+```
+Read("/tmp/s.png")
+```
+
+**The loop in practice:**
+1. Take screenshot
+2. Read it visually — what looks bad? what's working? what's boring?
+3. Make CSS/HTML changes
+4. Repeat
+
+The `--virtual-time-budget=8000` flag gives the page 8 seconds of simulated time so async JS (clock, weather, RSS) has time to render before the screenshot is taken.
+
+**Important:** The server must be running before screenshotting. If the screenshot shows a "site can't be reached" error, restart the server with `python3 -m http.server 8000 &`.
+
+---
+
+## Design System
+
+All sizing uses `cqw` (container query width) relative to `.signage-stage`. Never use `px`, `rem`, or `vw` for layout dimensions — the stage is a fixed-ratio container and everything must scale against it.
+
+```
+1cqw = 1% of stage width = ~10.8px at native resolution
+```
+
+The stage is `19:30` aspect ratio (width:height), constrained to fit the viewport.
+
+**Current color universe (as of last major redesign):**
+- Background: deep indigo-black (`#09090f`)
+- Primary accent: MSU Red (`#c8102e`)
+- Secondary accent: Gold (`#f0a500`)
+- Quote font: Playfair Display (serif, italic)
+- UI font: Inter (sans-serif, weights 100–900)
+- Stage has `filter: contrast(1.04) saturate(1.12)` for cinematic grade
+
+---
+
+## What Was Done (History)
+
+This project went through **60+ AI-driven screenshot iterations** across three sessions:
+
+**Session 1 (Dustin, manual):** Fixed broken RSS proxies, layout bugs, analog clock visibility, availability card detail, MSU red accent colors.
+
+**Session 2 (Claude, planned 20-iteration loop):**
+- Switched from Ubuntu to Inter font
+- Full-width frosted quote card
+- Cinematic hero gradient
+- Clock tick marks
+- Availability pill badge with glowing dot
+- RSS cards: left red accent stripe, source pill badges
+- Weather: big temperature number
+- Headlines header: fading ruled lines
+- Glassmorphism panels
+- First story featured treatment
+- Stage outer ring
+
+**Session 3 (Claude, planned 20-iteration loop, aggressive):**
+- Added MSU red top bar with school/dept name
+- Quote card: frosted glass band, giant quotation mark
+- Newspaper masthead HEADLINES bar
+- Name moved left under logo
+- Hero photo made vivid with minimal overlay
+- Clock: double-ring gold bezel, gold tick marks
+- RSS: borderless cards with dividing lines, lead story gradient
+
+**Session 4 (Claude, free-form unplanned 20-iteration loop):**
+- Completely abandoned red/black for gold + deep indigo universe
+- Clock centered as hero centerpiece (not bottom-left)
+- Floating frosted nameplate card (right side of hero)
+- Playfair Display serif for quote text
+- Giant Playfair quotation mark glyph (55% opacity gold)
+- Ghost index numbers (1–4) watermarked in RSS card backgrounds
+- Rounded stage corners with gold ring + red/purple glow
+- `filter: contrast(1.04) saturate(1.12)` on whole stage
+- Zebra-striped RSS rows with indigo tint
+- Lead story: gradient sweep from gold-tinted left to transparent
+- Page shell: tri-radial gradient (red upper-left, purple lower-right, deep indigo center)
+- Serif/sans-serif typographic contrast system
+
+---
+
+## Tips for a Future Agent
+
+**Be aggressive.** Timid changes produce timid results. The best iterations came from completely rewriting the color universe, repositioning major elements, or adding unexpected visual elements (ghost numbers, watch bezels, diagonal textures).
+
+**The free-form loop works better than a plan.** When given a plan, the agent tends to make conservative targeted fixes. When told to just look and react, it makes bolder creative choices. Tell the agent: *"Look at the screenshot and make aggressive changes. No plan. Just react."*
+
+**What to look for in screenshots:**
+- Is the hero photo visible or buried under overlays? (Reduce gradient opacity)
+- Does the composition feel balanced? (Center the clock, use the full width)
+- Is there typographic contrast? (Mix weights: 100 vs 800, serif vs sans)
+- Are the dark areas interesting or just flat black? (Add color gradients, radial glows)
+- Does it feel premium or cheap? (Add bezels, rings, borders, inner glows)
+
+**Things that worked well:**
+- Serif (Playfair Display) for the pull-quote, sans (Inter) for everything else
+- Ghost large numbers/text in RSS card backgrounds as decorative elements
+- `filter: contrast() saturate()` on the whole stage for a camera-grade feel
+- Centered clock as hero centerpiece rather than bottom-left widget
+- Frosted glass nameplate floating over the hero photo
+
+**Things that don't work:**
+- `clamp()` — this is a fixed-ratio display, use fixed `cqw` values
+- `px` or `rem` — always `cqw`
+- Animations in screenshots — headless Chrome freezes at the virtual time budget snapshot
+
+**The server dies between sessions.** Always check with `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/` before screenshotting and restart if needed.
+
+---
+
+## Current Branch
+
+`Dustin-Branch-#1` — all work has been done here and merged/pushed to remote.
