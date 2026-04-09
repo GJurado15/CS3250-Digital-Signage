@@ -284,24 +284,32 @@ body {
 }
 
 .analog-clock__ticks span {
-  display: block;
   position: absolute;
+  inset: 0;
+  display: block;
+  transform: rotate(var(--tick-angle));
+}
+
+.analog-clock__ticks span::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6%;
   width: 1.5%;
   height: 8%;
   background: rgba(255, 255, 255, 0.35);
-  left: 50%;
-  top: 6%;
-  transform-origin: 50% 440%;
-  transform: translateX(-50%) rotate(calc(var(--tick-angle)));
+  transform: translateX(-50%);
   border-radius: 1px;
 }
 
 .analog-clock__ticks span:nth-child(3n + 1) {
-  height: 12%;
+}
+
+.analog-clock__ticks span:nth-child(3n + 1)::before {
   top: 4%;
-  background: rgba(255, 255, 255, 0.6);
   width: 2%;
-  transform-origin: 50% 300%;
+  height: 12%;
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .analog-clock__hand {
