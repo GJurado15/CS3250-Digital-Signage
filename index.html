@@ -86,16 +86,11 @@
 
   <template id="rss-item-template">
     <article class="rss-item panel">
+      <div class="rss-item__image-col">
+        <img class="rss-item__thumb rss-item__thumb--hidden" alt="">
+      </div>
       <div class="rss-item__body">
         <div class="rss-item__headline">
-          <span class="rss-item__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <circle cx="12" cy="12" r="12"></circle>
-              <circle class="rss-item__icon-dot" cx="7.1" cy="16.9" r="1.9"></circle>
-              <path class="rss-item__icon-arc" d="M6.5 11.5a6 6 0 0 1 6 6"></path>
-              <path class="rss-item__icon-arc" d="M6.5 7a10.5 10.5 0 0 1 10.5 10.5"></path>
-            </svg>
-          </span>
           <h2 class="rss-item__title"></h2>
         </div>
         <div class="rss-item__meta">

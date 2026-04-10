@@ -150,23 +150,28 @@
   "rss": {
     "feeds": [
       {
-        "feedUrl": "https://news.google.com/rss/search?q=computing+profession&hl=en-US&gl=US&ceid=US:en",
-        "sourceName": "Computing Profession"
+        "feedUrl": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+        "sourceName": "Ars Technica"
       },
       {
-        "feedUrl": "https://news.google.com/rss/search?q=computer+science+theory&hl=en-US&gl=US&ceid=US:en",
-        "sourceName": "CS Theory"
+        "feedUrl": "https://hnrss.org/best",
+        "sourceName": "Hacker News"
       },
       {
-        "feedUrl": "https://news.google.com/rss/search?q=computing+applications&hl=en-US&gl=US&ceid=US:en",
-        "sourceName": "Computing Applications"
+        "feedUrl": "https://www.quantamagazine.org/computer-science/feed/",
+        "sourceName": "Quanta Magazine"
+      },
+      {
+        "feedUrl": "https://news.mit.edu/topic/mitcomputers-rss.xml",
+        "sourceName": "MIT News"
       }
     ],
-    "items": 4,
+    "perFeed": 1,
     "titleLines": 2,
     "summaryLength": 170,
-    "refreshMinutes": 5,
+    "refreshMinutes": 15,
     "proxies": [
+      "http://127.0.0.1:8000/proxy?url={url}",
       "https://api.rss2json.com/v1/api.json?rss_url={url}",
       "https://api.codetabs.com/v1/proxy?quest={url}",
       "https://api.allorigins.win/raw?url={url}"

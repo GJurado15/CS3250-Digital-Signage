@@ -40,7 +40,7 @@ body {
   aspect-ratio: 19 / 30;
   background: var(--case);
   display: grid;
-  grid-template-rows: 4.5% 48% 1fr;
+  grid-template-rows: 4.5% 38% 1fr;
   overflow: hidden;
   border-radius: 2cqw;
   filter: contrast(1.03) saturate(0.92);
@@ -676,19 +676,20 @@ body {
 
 .section-title {
   flex-shrink: 0;
-  font-size: 0.9cqw;
+  font-size: 1cqw;
   font-weight: 900;
   text-align: center;
-  letter-spacing: 0.6em;
+  letter-spacing: 0.7em;
   text-transform: uppercase;
-  color: var(--brass);
-  background: #1e1c12;
-  padding: 1% 4%;
+  color: rgba(200,168,72,0.9);
+  background: #1a1810;
+  padding: 1.1% 4%;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 0.08cqw solid rgba(200,168,72,0.2);
+  border-bottom: 0.1cqw solid rgba(200,168,72,0.25);
+  text-shadow: 0 0 2cqw rgba(200,168,72,0.4);
 }
 
 .section-title::before, .section-title::after {
@@ -706,17 +707,25 @@ body {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-rows: 2.2fr 1fr 1fr 1fr;
 }
 
 .rss-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 12cqw;
   min-height: 0;
   align-items: stretch;
   overflow: hidden;
   border-bottom: 0.08cqw solid rgba(200,168,72,0.1);
   background: transparent;
+}
+
+.rss-item--has-image {
+  grid-template-columns: 17cqw minmax(0, 1fr) 12cqw;
+}
+
+.rss-item:not(.rss-item--has-image) .rss-item__image-col {
+  display: none;
 }
 
 .rss-item:nth-child(even) {
@@ -726,6 +735,11 @@ body {
 .rss-item:first-child {
   background: linear-gradient(90deg, rgba(200,168,72,0.08) 0%, transparent 65%);
   border-left: 0.45cqw solid var(--brass);
+  grid-template-columns: minmax(0, 1fr) 13cqw;
+}
+
+.rss-item:first-child.rss-item--has-image {
+  grid-template-columns: 21cqw minmax(0, 1fr) 13cqw;
 }
 
 .rss-item:last-child { border-bottom: none; }
@@ -736,36 +750,13 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 3% 2.4% 3% 4%;
-  gap: 0.5cqw;
+  gap: 0.9cqw;
   position: relative;
   overflow: hidden;
 }
 
 .rss-item:first-child .rss-item__body { padding-left: 3.2%; }
 
-.rss-item:nth-child(1) .rss-item__body::before { content: "1"; }
-.rss-item:nth-child(2) .rss-item__body::before { content: "2"; }
-.rss-item:nth-child(3) .rss-item__body::before { content: "3"; }
-.rss-item:nth-child(4) .rss-item__body::before { content: "4"; }
-
-.rss-item__body::before {
-  position: absolute;
-  right: 0.5cqw;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14cqw;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(200,168,72,0.035);
-  pointer-events: none;
-  letter-spacing: -0.05em;
-  z-index: 0;
-  font-family: "Inter", sans-serif;
-}
-
-.rss-item:first-child .rss-item__body::before {
-  color: rgba(200,168,72,0.07);
-}
 
 .rss-item__headline,
 .rss-item__meta,
@@ -777,25 +768,35 @@ body {
 .rss-item__title {
   margin: 0;
   font-size: 2.4cqw;
-  line-height: 1.2;
+  line-height: 1.25;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--cream);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .rss-item:first-child .rss-item__title {
-  font-size: 2.9cqw;
+  font-size: 3.4cqw;
   font-weight: 800;
-  color: #f8f0da;
+  color: #f8f4e8;
+  letter-spacing: -0.03em;
+  -webkit-line-clamp: 3;
 }
 
 .rss-item:not(:first-child) .rss-item__title {
-  font-size: 2.2cqw;
+  font-size: 2.35cqw;
   font-weight: 600;
-  color: rgba(240,232,208,0.68);
+  color: rgba(240,232,208,0.85);
 }
 
-.rss-item:not(:first-child) .rss-item__summary { display: none; }
+.rss-item:not(:first-child) .rss-item__summary {
+  -webkit-line-clamp: 1;
+  font-size: 1.25cqw;
+  color: rgba(240,232,208,0.5);
+}
 
 .rss-item__meta {
   display: flex;
@@ -807,36 +808,48 @@ body {
 }
 
 .rss-item__source {
-  background: rgba(200,168,72,0.1);
-  border: 0.1cqw solid rgba(200,168,72,0.28);
-  color: rgba(200,168,72,0.82);
-  padding: 0.2cqw 0.7cqw;
+  background: rgba(200,168,72,0.08);
+  border: 0.1cqw solid rgba(200,168,72,0.3);
+  color: rgba(200,168,72,0.75);
+  padding: 0.25cqw 0.8cqw;
   border-radius: 0.3cqw;
   font-size: 1cqw;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
 }
 
 .rss-item:first-child .rss-item__source {
-  background: rgba(200,168,72,0.14);
-  border-color: rgba(200,168,72,0.48);
+  background: rgba(200,168,72,0.16);
+  border-color: rgba(200,168,72,0.55);
   color: var(--brass);
+  font-size: 1.1cqw;
+  box-shadow: 0 0 1cqw rgba(200,168,72,0.12);
 }
 
 .rss-item__date {
-  font-size: 1cqw;
+  font-size: 1.05cqw;
   font-weight: 600;
-  color: rgba(240,232,208,0.2);
+  color: rgba(200,168,72,0.55);
   font-variant-numeric: tabular-nums;
 }
 
 .rss-item__summary {
   margin: 0;
-  font-size: 1.35cqw;
+  font-size: 1.5cqw;
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(240,232,208,0.5);
+  line-height: 1.6;
+  color: rgba(240,232,208,0.68);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
   overflow: hidden;
+}
+
+.rss-item:first-child .rss-item__summary {
+  font-size: 1.6cqw;
+  color: rgba(240,232,208,0.78);
+  -webkit-line-clamp: 4;
 }
 
 .rss-item__qr {
@@ -844,11 +857,26 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4cqw;
-  width: 9cqw;
-  padding: 0 1.5cqw 0 1.2cqw;
-  border-left: 0.08cqw solid rgba(200,168,72,0.1);
-  flex-shrink: 0;
+  gap: 0.5cqw;
+  padding: 1.2cqw;
+  border-left: 0.08cqw solid rgba(200,168,72,0.12);
+}
+
+.rss-item__image-col {
+  overflow: hidden;
+  position: relative;
+  border-right: 0.1cqw solid rgba(200,168,72,0.15);
+}
+
+.rss-item__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rss-item__thumb--hidden {
+  display: none;
 }
 
 .rss-item__qr-image {
@@ -857,7 +885,8 @@ body {
   object-fit: contain;
   background: var(--cream);
   border-radius: 0.4cqw;
-  padding: 0.3cqw;
+  padding: 0.35cqw;
+  flex-shrink: 0;
 }
 
 .rss-item__qr-image--empty {

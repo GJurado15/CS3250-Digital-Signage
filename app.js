@@ -204,27 +204,59 @@ async function loadRss(rssConfig = {}) {
       feeds.map((feed) => fetchRssFeed(feed, proxyTemplates))
     );
 
-    const items = feedResults
+    // Per-feed items sorted by recency, take top 3 as lead candidates
+    const allFeedItems = feedResults
       .filter((result) => result.status === "fulfilled")
-      .flatMap((result) => result.value)
-      .flat()
-      .sort((left, right) => right.timestamp - left.timestamp)
-      .slice(0, rssConfig.items || 4);
+      .map((result) => result.value.sort((a, b) => b.timestamp - a.timestamp));
+
+    // Pick lead: highest engagement score across top 3 from each feed
+    const leadCandidates = allFeedItems.flatMap((items) => items.slice(0, 3));
+    const lead = leadCandidates
+      .map((item) => ({ item, score: scoreHeadline(item.title) }))
+      .sort((a, b) => b.score - a.score || b.item.timestamp - a.item.timestamp)[0]?.item;
+
+    // Fill remaining slots: most recent from each feed that isn't the lead
+    const secondaries = allFeedItems
+      .map((feedItems) => feedItems.find((item) => item !== lead))
+      .filter(Boolean)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, feeds.length - 1);
+
+    const items = lead ? [lead, ...secondaries] : secondaries;
 
     if (!items.length) {
       renderRssFallback("RSS feeds unavailable. Check the feed URLs or proxy in config.json.");
       return;
     }
 
+    // Fill in missing images by scraping og:image from article pages
+    await Promise.allSettled(
+      items
+        .filter((item) => !item.image && item.link)
+        .map(async (item) => {
+          item.image = await fetchOgImage(item.link, proxyTemplates);
+        })
+    );
+
     rssList.innerHTML = "";
 
     items.forEach((item) => {
       const node = rssTemplate.content.firstElementChild.cloneNode(true);
-      node.querySelector(".rss-item__title").textContent = clampLines(item.title, rssConfig.titleLines || 2);
+      node.querySelector(".rss-item__title").textContent = item.title;
       node.querySelector(".rss-item__source").textContent = item.source;
       node.querySelector(".rss-item__date").textContent = formatFeedDate(item.dateValue);
       node.querySelector(".rss-item__summary").textContent = summarize(item.description, rssConfig.summaryLength || 170);
+
+      const thumb = node.querySelector(".rss-item__thumb");
       const qrImage = node.querySelector(".rss-item__qr-image");
+
+      if (item.image) {
+        thumb.src = item.image;
+        thumb.alt = item.title;
+        thumb.classList.remove("rss-item__thumb--hidden");
+        node.classList.add("rss-item--has-image");
+      }
+
       if (item.link) {
         qrImage.src = buildQrCodeUrl(item.link);
         qrImage.alt = `QR code for ${item.title}`;
@@ -232,6 +264,7 @@ async function loadRss(rssConfig = {}) {
         qrImage.removeAttribute("src");
         qrImage.alt = "QR code unavailable";
       }
+
       rssList.appendChild(node);
     });
 
@@ -310,12 +343,17 @@ async function fetchRssFeed(feed, proxyTemplates) {
         if (json.status === "ok" && Array.isArray(json.items)) {
           return json.items.map((item) => {
             const parsedDate = Date.parse(item.pubDate);
+            const image =
+              item.thumbnail ||
+              (item.enclosure?.type?.startsWith("image/") ? item.enclosure.link : null) ||
+              null;
             return {
               title: normalizeFeedText(item.title || "Untitled"),
               source: feed.sourceName,
               dateValue: item.pubDate,
               timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
               link: item.link || "",
+              image,
               description: normalizeFeedText(item.description || item.content || "")
             };
           });
@@ -347,6 +385,7 @@ async function fetchRssFeed(feed, proxyTemplates) {
           dateValue,
           timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
           link: extractFeedLink(item),
+          image: extractFeedImage(item),
           description:
             normalizeFeedText(
               item.querySelector("description")?.textContent ||
@@ -384,6 +423,41 @@ function renderRssFallback(message) {
   }
 }
 
+function scoreHeadline(title) {
+  let score = 0;
+  const t = title.toLowerCase();
+
+  // Question format — strongest engagement signal
+  if (t.includes("?")) score += 5;
+
+  // Exploratory framing at the start of a title
+  if (/^(why|how|what|when|where|can |should |will |is |are |does |do )/.test(t)) score += 3;
+
+  // Engaging hooks and power words
+  const hooks = [
+    "breakthrough", "first", "never", "impossible", "finally", "actually",
+    "secret", "revealed", "surprising", "unexpected", "mystery", "wrong",
+    "discover", "real", "inside", "fear", "love", "hate", "crisis",
+    "end of", "rise of", "death of", "future", "revolution", "warning",
+    "new", "biggest", "worst", "best", "change"
+  ];
+  for (const w of hooks) {
+    if (t.includes(w)) score += 1;
+  }
+
+  // Penalty for dry / institutional content
+  const boring = [
+    "remembering", "quarterly", "earnings", "devoted", "volunteer",
+    "obituary", "in memoriam", "annual report", "press release",
+    "advisory", "q1 ", "q2 ", "q3 ", "q4 "
+  ];
+  for (const w of boring) {
+    if (t.includes(w)) score -= 5;
+  }
+
+  return score;
+}
+
 function summarize(htmlLikeText, maxLength) {
   const plainText = htmlLikeText
     .replace(/<[^>]*>/g, " ")
@@ -411,19 +485,19 @@ function clampLines(text, maxCharacters) {
 }
 
 function formatFeedDate(dateValue) {
-  if (!dateValue) {
-    return "";
-  }
-
+  if (!dateValue) return "";
   const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
+  if (Number.isNaN(date.getTime())) return "";
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric"
-  }).format(date);
+  const diffMs = Date.now() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHr < 24) return `${diffHr}h ago`;
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
 }
 
 function deriveSourceName(feedUrl) {
@@ -438,6 +512,55 @@ function extractFeedLink(item) {
   const atomLink = item.querySelector("link[href]")?.getAttribute("href");
   const rssLink = item.querySelector("link")?.textContent?.trim();
   return atomLink || rssLink || "";
+}
+
+async function fetchOgImage(articleUrl, proxyTemplates) {
+  for (const proxyTemplate of proxyTemplates) {
+    try {
+      const proxyUrl = proxyTemplate.replace("{url}", encodeURIComponent(articleUrl));
+      const response = await fetch(proxyUrl, { cache: "no-store" });
+      if (!response.ok) continue;
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const image =
+        doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
+        doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content") ||
+        doc.querySelector('meta[name="og:image"]')?.getAttribute("content");
+      if (image) return image;
+    } catch (_) {
+      // try next proxy
+    }
+  }
+  return null;
+}
+
+function extractFeedImage(item) {
+  // Walk all child elements looking for media:content, media:thumbnail, or enclosure with image type
+  for (const el of item.getElementsByTagName("*")) {
+    const local = el.localName;
+    if (local === "content" || local === "thumbnail") {
+      const url = el.getAttribute("url");
+      const medium = el.getAttribute("medium");
+      const type = el.getAttribute("type") || "";
+      if (url && (medium === "image" || type.startsWith("image/") || local === "thumbnail")) {
+        return url;
+      }
+    }
+    if (local === "enclosure") {
+      const type = el.getAttribute("type") || "";
+      const url = el.getAttribute("url");
+      if (url && type.startsWith("image/")) return url;
+    }
+  }
+  // Fallback: extract first <img src> from content body HTML (e.g. Verge/Atom feeds)
+  for (const el of item.getElementsByTagName("*")) {
+    const html = el.textContent || "";
+    if (html.includes("<img")) {
+      const match = html.match(/<img[^>]+src="([^"]+)"/i);
+      if (match && match[1].startsWith("http")) return match[1];
+    }
+  }
+  return null;
 }
 
 function extractFeedTitle(item, fallbackSource) {
@@ -478,11 +601,18 @@ function stripTrailingSource(title, source) {
 }
 
 function normalizeFeedText(text) {
-  return text
-    .replace(/&nbsp;|&#160;/gi, " ")
+  // Decode HTML entities via a throwaway element, then strip any remaining tags
+  const el = document.createElement("div");
+  el.innerHTML = text.replace(/<[^>]*>/g, " ");
+  const cleaned = el.textContent
+    .replace(/https?:\/\/\S+/g, "")                                     // strip bare URLs
+    .replace(/\b(Article\s*URL|Comments?\s*Url?|Points?)\s*:?\s*\d*/gi, "") // strip HN metadata
+    .replace(/\s+&\s+/g, " ")                                           // strip orphaned ampersands
     .replace(/\u00A0/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+  // If what's left is too short to be real content (metadata remnants), discard it
+  return cleaned.length < 30 ? "" : cleaned;
 }
 
 function buildQrCodeUrl(url) {
