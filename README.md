@@ -25,10 +25,31 @@ The server must be running for the app to load `config.json`, `availability.json
 | `index.html` | Page structure — rarely needs editing |
 | `styles.css` | All visual design |
 | `app.js` | Clock, weather, RSS, quotes, QR codes, availability |
+| `utils.js` | Pure utility functions (no DOM/network) — shared by `app.js` and tests |
 | `config.json` | All configurable content — **edit this for day-to-day changes** |
 | `availability.json` | Office in/out status — **edit this to update availability** |
 | `server.py` | Local dev/kiosk server with built-in CORS proxy |
 | `start-kiosk.sh` | Raspberry Pi launcher |
+
+---
+
+## Development
+
+Install dependencies first (one-time):
+
+```bash
+npm install
+```
+
+| Command | What it does |
+|---------|-------------|
+| `npm run lint` | Run ESLint across all JS files |
+| `npm test` | Run Jest unit tests with coverage report |
+| `npm run docs` | Generate JSDoc HTML documentation into `docs/` |
+
+**CI/CD** — GitHub Actions runs lint and tests automatically on every push and pull request. A PR cannot be merged if either check fails. Coverage must stay above 90% or the test run fails.
+
+Tests live in `utils.test.js` and cover the 11 pure utility functions in `utils.js` (date formatting, headline scoring, feed normalization, weather codes, etc.). Functions that require a browser or network are not unit-tested.
 
 ---
 

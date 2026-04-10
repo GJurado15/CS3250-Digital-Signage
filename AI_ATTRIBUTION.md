@@ -13,6 +13,11 @@ AI-assisted work in the current version includes:
 
 Human review and project-specific decisions are still required before deployment.
 
+AI-assisted work in the current version also includes:
+- ESLint, Jest, JSDoc, and GitHub Actions CI/CD setup
+- Extraction of pure utility functions into a testable `utils.js` module
+- 40 Jest unit tests with 100% statement/function coverage and enforced thresholds
+
 ---
 
 ## Session — April 10, 2026
@@ -69,3 +74,37 @@ AI-assisted work in this session includes:
 - Rewrote `README.md` for human readers (setup, config, Pi deployment)
 - Replaced `TODO.md` with `CLAUDE.md` — comprehensive AI agent guide covering screenshot loop, design system, feed history, scorer, layout spec, OG image pipeline, planned watch modes, and known pitfalls
 - Committed and pushed all changes to `Dustin-Branch-#1`
+
+---
+
+## Session — April 10, 2026 (tooling: ESLint, Jest, JSDoc, CI/CD)
+
+AI-assisted work in this session includes:
+- Explained ESLint, Jest, JSDoc, and CI/CD as concept groups with industry context
+- Extracted 11 pure utility functions (no DOM/network) from `app.js` into a new `utils.js` ES module, and updated `app.js` to import them — enabling unit testing without a browser
+- Added JSDoc `@param` / `@returns` comments to all 11 exported functions in `utils.js`
+- Initialized `package.json` via `npm init` and installed dev dependencies: `eslint`, `@eslint/js`, `globals`, `jest`, `babel-jest`, `@babel/core`, `@babel/preset-env`, `jsdoc`
+- Created `eslint.config.js` (ESLint 9 flat config) with three separate environments: browser globals for `app.js`/`utils.js`, Node CommonJS for `*.config.js`, and Jest globals for `*.test.js`
+- Created `babel.config.js` so Jest can transform ES module `import`/`export` syntax to CommonJS at test time (no effect on the browser)
+- Wrote `utils.test.js` with 40 Jest tests covering all 11 utility functions — including edge cases (null input, invalid dates, unknown weather codes, malformed URLs)
+- Added Jest coverage thresholds to `package.json` (≥90% statements/functions/lines, ≥85% branches); achieved 100% statement/function coverage
+- Created `.github/workflows/ci.yml` — GitHub Actions pipeline that runs `npm run lint` and `npm test` on every push and pull request
+- Added `.gitignore` excluding `node_modules/` and `docs/`
+- Updated `README.md` with a Development section (commands, CI description, test scope)
+- Updated `CLAUDE.md` file map and added a Tooling section documenting all new files and the `utils.js` rationale
+
+---
+
+## Session — April 10, 2026 (vintage watch Sector Dial)
+
+AI-assisted work in this session includes:
+- Reviewed TODO.md for context; proposed and discussed vintage watch as the visual theme direction
+- Planned a 4-mode rotating watch theme system (Sector Dial, Dress Watch, Diver/Tool, Flieger/Pilot) and added the objective to TODO.md
+- Executed ~11 iterations of screenshot-driven development to build Mode 1 (Sector Dial)
+- Rewrote `styles.css` to implement cream/charcoal/brass Sector Dial aesthetic: two-tone dial, dark outer ring, brass tick marks, blued steel hands, red seconds hand, crystal dome highlight, sunburst texture in cream field
+- Added 60-tick generation (replacing 12) in `app.js` and numeral ring to `index.html`
+- Added watchmaker-style inscriptions: "COMPUTER SCIENCE" center field, signed-dial underline on nameplate, "THOUGHT OF THE DAY" complication label on quote card
+- Redesigned weather card as a circular subdial
+- Refined hero layout to make the clock the true visual centerpiece
+- Committed as: "Vintage watch Mode 1: Sector Dial — cream/charcoal/brass theme"
+- Opened a live Chromium window during iteration for real-time F5 preview

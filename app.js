@@ -1,3 +1,9 @@
+import {
+  scoreHeadline, summarize, formatFeedDate,
+  stripTrailingSource, buildQrCodeUrl,
+  getQuoteDayIndex, describeWeather, normalizeRssFeeds, normalizeRssProxies
+} from "./utils.js";
+
 const configUrl = "config.json";
 const availabilityUrl = "availability.json";
 
@@ -289,41 +295,6 @@ function scheduleRssRefresh(rssConfig) {
   );
 }
 
-function normalizeRssFeeds(rssConfig) {
-  if (Array.isArray(rssConfig.feeds) && rssConfig.feeds.length) {
-    return rssConfig.feeds
-      .filter((feed) => feed && feed.feedUrl)
-      .map((feed) => ({
-        feedUrl: feed.feedUrl,
-        sourceName: feed.sourceName || rssConfig.sourceName || deriveSourceName(feed.feedUrl)
-      }));
-  }
-
-  if (rssConfig.feedUrl) {
-    return [{
-      feedUrl: rssConfig.feedUrl,
-      sourceName: rssConfig.sourceName || deriveSourceName(rssConfig.feedUrl)
-    }];
-  }
-
-  return [];
-}
-
-function normalizeRssProxies(rssConfig) {
-  if (Array.isArray(rssConfig.proxies) && rssConfig.proxies.length) {
-    return rssConfig.proxies;
-  }
-
-  if (rssConfig.proxy) {
-    return [rssConfig.proxy];
-  }
-
-  return [
-    "https://api.allorigins.win/raw?url={url}",
-    "https://api.codetabs.com/v1/proxy?quest={url}"
-  ];
-}
-
 async function fetchRssFeed(feed, proxyTemplates) {
   let lastError;
 
@@ -358,7 +329,7 @@ async function fetchRssFeed(feed, proxyTemplates) {
             };
           });
         }
-      } catch (_) {
+      } catch {
         // Not JSON, fall through to XML parsing
       }
 
@@ -423,91 +394,6 @@ function renderRssFallback(message) {
   }
 }
 
-function scoreHeadline(title) {
-  let score = 0;
-  const t = title.toLowerCase();
-
-  // Question format — strongest engagement signal
-  if (t.includes("?")) score += 5;
-
-  // Exploratory framing at the start of a title
-  if (/^(why|how|what|when|where|can |should |will |is |are |does |do )/.test(t)) score += 3;
-
-  // Engaging hooks and power words
-  const hooks = [
-    "breakthrough", "first", "never", "impossible", "finally", "actually",
-    "secret", "revealed", "surprising", "unexpected", "mystery", "wrong",
-    "discover", "real", "inside", "fear", "love", "hate", "crisis",
-    "end of", "rise of", "death of", "future", "revolution", "warning",
-    "new", "biggest", "worst", "best", "change"
-  ];
-  for (const w of hooks) {
-    if (t.includes(w)) score += 1;
-  }
-
-  // Penalty for dry / institutional content
-  const boring = [
-    "remembering", "quarterly", "earnings", "devoted", "volunteer",
-    "obituary", "in memoriam", "annual report", "press release",
-    "advisory", "q1 ", "q2 ", "q3 ", "q4 "
-  ];
-  for (const w of boring) {
-    if (t.includes(w)) score -= 5;
-  }
-
-  return score;
-}
-
-function summarize(htmlLikeText, maxLength) {
-  const plainText = htmlLikeText
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (plainText.length <= maxLength) {
-    return plainText;
-  }
-
-  const cut = plainText.slice(0, maxLength - 3);
-  const lastSpace = cut.lastIndexOf(" ");
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
-}
-
-function clampLines(text, maxCharacters) {
-  const normalized = text.replace(/\s+/g, " ").trim();
-  const limit = maxCharacters * 28;
-  if (normalized.length <= limit) {
-    return normalized;
-  }
-  const cut = normalized.slice(0, limit - 3);
-  const lastSpace = cut.lastIndexOf(" ");
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
-}
-
-function formatFeedDate(dateValue) {
-  if (!dateValue) return "";
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return "";
-
-  const diffMs = Date.now() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHr = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHr / 24);
-
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHr < 24) return `${diffHr}h ago`;
-  if (diffDay < 7) return `${diffDay}d ago`;
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
-}
-
-function deriveSourceName(feedUrl) {
-  try {
-    return new URL(feedUrl).hostname.replace("www.", "");
-  } catch {
-    return "Feed";
-  }
-}
-
 function extractFeedLink(item) {
   const atomLink = item.querySelector("link[href]")?.getAttribute("href");
   const rssLink = item.querySelector("link")?.textContent?.trim();
@@ -527,7 +413,7 @@ async function fetchOgImage(articleUrl, proxyTemplates) {
         doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content") ||
         doc.querySelector('meta[name="og:image"]')?.getAttribute("content");
       if (image) return image;
-    } catch (_) {
+    } catch {
       // try next proxy
     }
   }
@@ -595,11 +481,6 @@ function extractFeedTitle(item, fallbackSource) {
   };
 }
 
-function stripTrailingSource(title, source) {
-  const suffix = ` - ${source}`;
-  return title.endsWith(suffix) ? title.slice(0, -suffix.length).trim() : title;
-}
-
 function normalizeFeedText(text) {
   // Decode HTML entities via a throwaway element, then strip any remaining tags
   const el = document.createElement("div");
@@ -615,45 +496,4 @@ function normalizeFeedText(text) {
   return cleaned.length < 30 ? "" : cleaned;
 }
 
-function buildQrCodeUrl(url) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=132x132&data=${encodeURIComponent(url)}`;
-}
 
-function getQuoteDayIndex(timezone) {
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  });
-  const [year, month, day] = formatter.format(new Date()).split("-");
-  return Number.parseInt(year, 10) * 1000 + Number.parseInt(month, 10) * 50 + Number.parseInt(day, 10);
-}
-
-function describeWeather(code) {
-  const weatherMap = {
-    0: { icon: "\u2600", label: "CLEAR SKY" },
-    1: { icon: "\uD83C\uDF24", label: "Mostly clear" },
-    2: { icon: "\u26C5", label: "Partly cloudy" },
-    3: { icon: "\u2601", label: "Overcast" },
-    45: { icon: "\uD83C\uDF2B", label: "Fog" },
-    48: { icon: "\uD83C\uDF2B", label: "Freezing fog" },
-    51: { icon: "\uD83C\uDF26", label: "Light drizzle" },
-    53: { icon: "\uD83C\uDF26", label: "Drizzle" },
-    55: { icon: "\uD83C\uDF27", label: "Heavy drizzle" },
-    61: { icon: "\uD83C\uDF26", label: "Light rain" },
-    63: { icon: "\uD83C\uDF27", label: "Rain" },
-    65: { icon: "\uD83C\uDF27", label: "Heavy rain" },
-    71: { icon: "\uD83C\uDF28", label: "Light snow" },
-    73: { icon: "\uD83C\uDF28", label: "Snow" },
-    75: { icon: "\u2744", label: "Heavy snow" },
-    80: { icon: "\uD83C\uDF26", label: "Rain showers" },
-    81: { icon: "\uD83C\uDF27", label: "Heavy showers" },
-    82: { icon: "\u26C8", label: "Violent showers" },
-    95: { icon: "\u26C8", label: "Thunderstorm" },
-    96: { icon: "\u26C8", label: "Storm with hail" },
-    99: { icon: "\u26C8", label: "Severe hail storm" }
-  };
-
-  return weatherMap[code] || { icon: "\u2601", label: "Conditions unavailable" };
-}

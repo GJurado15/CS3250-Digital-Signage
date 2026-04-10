@@ -54,10 +54,35 @@ Read("/tmp/s.png")
 |------|------|
 | `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. |
 | `styles.css` | All visual design. This is where most work happens. |
-| `app.js` | All runtime logic: clock, weather, RSS pipeline, QR codes, quotes, availability. |
+| `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes, availability. Imports from `utils.js`. |
+| `utils.js` | Pure utility functions (no DOM, no network). Imported by `app.js` and tested by Jest. |
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
 | `availability.json` | Professor's in/out status. Edited independently by the client. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
+
+## Tooling
+
+| File | Role |
+|------|------|
+| `utils.test.js` | Jest unit tests for all 11 functions in `utils.js`. Run with `npm test`. |
+| `eslint.config.js` | ESLint 9 flat config. Three environments: browser (`app.js`, `utils.js`), Node (`*.config.js`), Jest (`*.test.js`). |
+| `babel.config.js` | Tells Jest to transform ES module `import`/`export` to CommonJS. No effect on the browser. |
+| `package.json` | npm scripts (`lint`, `test`, `docs`) and Jest coverage thresholds (90% minimum). |
+| `.github/workflows/ci.yml` | GitHub Actions CI: runs `npm run lint` then `npm test` on every push and PR. |
+| `.gitignore` | Excludes `node_modules/` and generated `docs/` from git. |
+
+### Running the tools
+
+```bash
+npm install       # one-time setup
+npm run lint      # ESLint — checks all *.js files
+npm test          # Jest — 40 tests, enforces ≥90% coverage
+npm run docs      # jsdoc — generates HTML docs in docs/
+```
+
+### Why `utils.js` exists
+
+`app.js` is a browser module loaded with `type="module"`. Jest runs in Node.js and cannot access the DOM. To make pure logic testable, 11 functions with no DOM or network dependencies were extracted into `utils.js` with ES module exports. `app.js` imports them. Jest imports them via Babel. The browser loads both natively.
 
 ---
 

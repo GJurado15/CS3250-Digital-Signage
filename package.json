@@ -1,0 +1,43 @@
+{
+  "name": "cs3250-digital-signage",
+  "version": "1.0.0",
+  "description": "A browser-based digital signage kiosk for Dr. Steve Beaty's office at MSU Denver's CS Department. Runs fullscreen on a Raspberry Pi at 1080×1800 (portrait). Static HTML/CSS/JS — no build step, no framework.",
+  "main": "app.js",
+  "scripts": {
+    "lint": "eslint \"*.js\"",
+    "test": "jest",
+    "docs": "jsdoc utils.js -d docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GJurado15/CS3250-Digital-Signage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/GJurado15/CS3250-Digital-Signage/issues"
+  },
+  "homepage": "https://github.com/GJurado15/CS3250-Digital-Signage#readme",
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 90,
+        "branches": 85,
+        "functions": 90,
+        "lines": 90
+      }
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.2",
+    "@eslint/js": "^10.0.1",
+    "babel-jest": "^30.3.0",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0",
+    "jest": "^30.3.0",
+    "jsdoc": "^4.0.5"
+  }
+}
