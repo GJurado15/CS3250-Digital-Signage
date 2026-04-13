@@ -477,7 +477,14 @@ body {
 
 /* Minor tick marks — cream on dark ring */
 .analog-clock__ticks span {
+  position: absolute;
+  inset: 0;
   display: block;
+  transform: rotate(var(--tick-angle));
+}
+
+.analog-clock__ticks span::before {
+  content: "";
   position: absolute;
   width: 0.7%;
   height: 4%;
