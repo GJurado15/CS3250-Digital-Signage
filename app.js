@@ -1,3 +1,9 @@
+import {
+  scoreHeadline, summarize, formatFeedDate,
+  stripTrailingSource, buildQrCodeUrl,
+  getQuoteDayIndex, describeWeather, normalizeRssFeeds, normalizeRssProxies
+} from "./utils.js";
+
 const configUrl = "config.json";
 const availabilityUrl = "availability.json";
 
@@ -130,9 +136,9 @@ function startClock(timezone) {
     const minuteRotation = minutes * 6 + seconds * 0.1;
     const secondRotation = seconds * 6;
 
-    hourHand.style.transform = `rotate(${hourRotation}deg)`;
-    minuteHand.style.transform = `rotate(${minuteRotation}deg)`;
-    secondHand.style.transform = `rotate(${secondRotation}deg)`;
+    hourHand.style.setProperty("--hand-angle", `${hourRotation}deg`);
+    minuteHand.style.setProperty("--hand-angle", `${minuteRotation}deg`);
+    secondHand.style.setProperty("--hand-angle", `${secondRotation}deg`);
 
     timeText.textContent = timeFormatter.format(now);
     dateText.textContent = dateFormatter.format(now);
@@ -144,9 +150,9 @@ function startClock(timezone) {
 
 function buildClockTicks() {
   const fragment = document.createDocumentFragment();
-  for (let index = 0; index < 12; index += 1) {
+  for (let index = 0; index < 60; index += 1) {
     const tick = document.createElement("span");
-    tick.style.setProperty("--tick-angle", `${index * 30}deg`);
+    tick.style.setProperty("--tick-angle", `${index * 6}deg`);
     fragment.appendChild(tick);
   }
   clockTicks.appendChild(fragment);
@@ -204,27 +210,59 @@ async function loadRss(rssConfig = {}) {
       feeds.map((feed) => fetchRssFeed(feed, proxyTemplates))
     );
 
-    const items = feedResults
+    // Per-feed items sorted by recency, take top 3 as lead candidates
+    const allFeedItems = feedResults
       .filter((result) => result.status === "fulfilled")
-      .flatMap((result) => result.value)
-      .flat()
-      .sort((left, right) => right.timestamp - left.timestamp)
-      .slice(0, rssConfig.items || 4);
+      .map((result) => result.value.sort((a, b) => b.timestamp - a.timestamp));
+
+    // Pick lead: highest engagement score across top 3 from each feed
+    const leadCandidates = allFeedItems.flatMap((items) => items.slice(0, 3));
+    const lead = leadCandidates
+      .map((item) => ({ item, score: scoreHeadline(item.title) }))
+      .sort((a, b) => b.score - a.score || b.item.timestamp - a.item.timestamp)[0]?.item;
+
+    // Fill remaining slots: most recent from each feed that isn't the lead
+    const secondaries = allFeedItems
+      .map((feedItems) => feedItems.find((item) => item !== lead))
+      .filter(Boolean)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, feeds.length - 1);
+
+    const items = lead ? [lead, ...secondaries] : secondaries;
 
     if (!items.length) {
       renderRssFallback("RSS feeds unavailable. Check the feed URLs or proxy in config.json.");
       return;
     }
 
+    // Fill in missing images by scraping og:image from article pages
+    await Promise.allSettled(
+      items
+        .filter((item) => !item.image && item.link)
+        .map(async (item) => {
+          item.image = await fetchOgImage(item.link, proxyTemplates);
+        })
+    );
+
     rssList.innerHTML = "";
 
     items.forEach((item) => {
       const node = rssTemplate.content.firstElementChild.cloneNode(true);
-      node.querySelector(".rss-item__title").textContent = clampLines(item.title, rssConfig.titleLines || 2);
+      node.querySelector(".rss-item__title").textContent = item.title;
       node.querySelector(".rss-item__source").textContent = item.source;
       node.querySelector(".rss-item__date").textContent = formatFeedDate(item.dateValue);
       node.querySelector(".rss-item__summary").textContent = summarize(item.description, rssConfig.summaryLength || 170);
+
+      const thumb = node.querySelector(".rss-item__thumb");
       const qrImage = node.querySelector(".rss-item__qr-image");
+
+      if (item.image) {
+        thumb.src = item.image;
+        thumb.alt = item.title;
+        thumb.classList.remove("rss-item__thumb--hidden");
+        node.classList.add("rss-item--has-image");
+      }
+
       if (item.link) {
         qrImage.src = buildQrCodeUrl(item.link);
         qrImage.alt = `QR code for ${item.title}`;
@@ -232,6 +270,7 @@ async function loadRss(rssConfig = {}) {
         qrImage.removeAttribute("src");
         qrImage.alt = "QR code unavailable";
       }
+
       rssList.appendChild(node);
     });
 
@@ -256,41 +295,6 @@ function scheduleRssRefresh(rssConfig) {
   );
 }
 
-function normalizeRssFeeds(rssConfig) {
-  if (Array.isArray(rssConfig.feeds) && rssConfig.feeds.length) {
-    return rssConfig.feeds
-      .filter((feed) => feed && feed.feedUrl)
-      .map((feed) => ({
-        feedUrl: feed.feedUrl,
-        sourceName: feed.sourceName || rssConfig.sourceName || deriveSourceName(feed.feedUrl)
-      }));
-  }
-
-  if (rssConfig.feedUrl) {
-    return [{
-      feedUrl: rssConfig.feedUrl,
-      sourceName: rssConfig.sourceName || deriveSourceName(rssConfig.feedUrl)
-    }];
-  }
-
-  return [];
-}
-
-function normalizeRssProxies(rssConfig) {
-  if (Array.isArray(rssConfig.proxies) && rssConfig.proxies.length) {
-    return rssConfig.proxies;
-  }
-
-  if (rssConfig.proxy) {
-    return [rssConfig.proxy];
-  }
-
-  return [
-    "https://api.allorigins.win/raw?url={url}",
-    "https://api.codetabs.com/v1/proxy?quest={url}"
-  ];
-}
-
 async function fetchRssFeed(feed, proxyTemplates) {
   let lastError;
 
@@ -310,17 +314,22 @@ async function fetchRssFeed(feed, proxyTemplates) {
         if (json.status === "ok" && Array.isArray(json.items)) {
           return json.items.map((item) => {
             const parsedDate = Date.parse(item.pubDate);
+            const image =
+              item.thumbnail ||
+              (item.enclosure?.type?.startsWith("image/") ? item.enclosure.link : null) ||
+              null;
             return {
               title: normalizeFeedText(item.title || "Untitled"),
               source: feed.sourceName,
               dateValue: item.pubDate,
               timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
               link: item.link || "",
+              image,
               description: normalizeFeedText(item.description || item.content || "")
             };
           });
         }
-      } catch (_) {
+      } catch {
         // Not JSON, fall through to XML parsing
       }
 
@@ -347,6 +356,7 @@ async function fetchRssFeed(feed, proxyTemplates) {
           dateValue,
           timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
           link: extractFeedLink(item),
+          image: extractFeedImage(item),
           description:
             normalizeFeedText(
               item.querySelector("description")?.textContent ||
@@ -384,60 +394,59 @@ function renderRssFallback(message) {
   }
 }
 
-function summarize(htmlLikeText, maxLength) {
-  const plainText = htmlLikeText
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (plainText.length <= maxLength) {
-    return plainText;
-  }
-
-  const cut = plainText.slice(0, maxLength - 3);
-  const lastSpace = cut.lastIndexOf(" ");
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
-}
-
-function clampLines(text, maxCharacters) {
-  const normalized = text.replace(/\s+/g, " ").trim();
-  const limit = maxCharacters * 28;
-  if (normalized.length <= limit) {
-    return normalized;
-  }
-  const cut = normalized.slice(0, limit - 3);
-  const lastSpace = cut.lastIndexOf(" ");
-  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}...`;
-}
-
-function formatFeedDate(dateValue) {
-  if (!dateValue) {
-    return "";
-  }
-
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric"
-  }).format(date);
-}
-
-function deriveSourceName(feedUrl) {
-  try {
-    return new URL(feedUrl).hostname.replace("www.", "");
-  } catch {
-    return "Feed";
-  }
-}
-
 function extractFeedLink(item) {
   const atomLink = item.querySelector("link[href]")?.getAttribute("href");
   const rssLink = item.querySelector("link")?.textContent?.trim();
   return atomLink || rssLink || "";
+}
+
+async function fetchOgImage(articleUrl, proxyTemplates) {
+  for (const proxyTemplate of proxyTemplates) {
+    try {
+      const proxyUrl = proxyTemplate.replace("{url}", encodeURIComponent(articleUrl));
+      const response = await fetch(proxyUrl, { cache: "no-store" });
+      if (!response.ok) continue;
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const image =
+        doc.querySelector('meta[property="og:image"]')?.getAttribute("content") ||
+        doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content") ||
+        doc.querySelector('meta[name="og:image"]')?.getAttribute("content");
+      if (image) return image;
+    } catch {
+      // try next proxy
+    }
+  }
+  return null;
+}
+
+function extractFeedImage(item) {
+  // Walk all child elements looking for media:content, media:thumbnail, or enclosure with image type
+  for (const el of item.getElementsByTagName("*")) {
+    const local = el.localName;
+    if (local === "content" || local === "thumbnail") {
+      const url = el.getAttribute("url");
+      const medium = el.getAttribute("medium");
+      const type = el.getAttribute("type") || "";
+      if (url && (medium === "image" || type.startsWith("image/") || local === "thumbnail")) {
+        return url;
+      }
+    }
+    if (local === "enclosure") {
+      const type = el.getAttribute("type") || "";
+      const url = el.getAttribute("url");
+      if (url && type.startsWith("image/")) return url;
+    }
+  }
+  // Fallback: extract first <img src> from content body HTML (e.g. Verge/Atom feeds)
+  for (const el of item.getElementsByTagName("*")) {
+    const html = el.textContent || "";
+    if (html.includes("<img")) {
+      const match = html.match(/<img[^>]+src="([^"]+)"/i);
+      if (match && match[1].startsWith("http")) return match[1];
+    }
+  }
+  return null;
 }
 
 function extractFeedTitle(item, fallbackSource) {
@@ -472,58 +481,19 @@ function extractFeedTitle(item, fallbackSource) {
   };
 }
 
-function stripTrailingSource(title, source) {
-  const suffix = ` - ${source}`;
-  return title.endsWith(suffix) ? title.slice(0, -suffix.length).trim() : title;
-}
-
 function normalizeFeedText(text) {
-  return text
-    .replace(/&nbsp;|&#160;/gi, " ")
+  // Decode HTML entities via a throwaway element, then strip any remaining tags
+  const el = document.createElement("div");
+  el.innerHTML = text.replace(/<[^>]*>/g, " ");
+  const cleaned = el.textContent
+    .replace(/https?:\/\/\S+/g, "")                                     // strip bare URLs
+    .replace(/\b(Article\s*URL|Comments?\s*Url?|Points?)\s*:?\s*\d*/gi, "") // strip HN metadata
+    .replace(/\s+&\s+/g, " ")                                           // strip orphaned ampersands
     .replace(/\u00A0/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+  // If what's left is too short to be real content (metadata remnants), discard it
+  return cleaned.length < 30 ? "" : cleaned;
 }
 
-function buildQrCodeUrl(url) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=132x132&data=${encodeURIComponent(url)}`;
-}
 
-function getQuoteDayIndex(timezone) {
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  });
-  const [year, month, day] = formatter.format(new Date()).split("-");
-  return Number.parseInt(year, 10) * 1000 + Number.parseInt(month, 10) * 50 + Number.parseInt(day, 10);
-}
-
-function describeWeather(code) {
-  const weatherMap = {
-    0: { icon: "\u2600", label: "CLEAR SKY" },
-    1: { icon: "\uD83C\uDF24", label: "Mostly clear" },
-    2: { icon: "\u26C5", label: "Partly cloudy" },
-    3: { icon: "\u2601", label: "Overcast" },
-    45: { icon: "\uD83C\uDF2B", label: "Fog" },
-    48: { icon: "\uD83C\uDF2B", label: "Freezing fog" },
-    51: { icon: "\uD83C\uDF26", label: "Light drizzle" },
-    53: { icon: "\uD83C\uDF26", label: "Drizzle" },
-    55: { icon: "\uD83C\uDF27", label: "Heavy drizzle" },
-    61: { icon: "\uD83C\uDF26", label: "Light rain" },
-    63: { icon: "\uD83C\uDF27", label: "Rain" },
-    65: { icon: "\uD83C\uDF27", label: "Heavy rain" },
-    71: { icon: "\uD83C\uDF28", label: "Light snow" },
-    73: { icon: "\uD83C\uDF28", label: "Snow" },
-    75: { icon: "\u2744", label: "Heavy snow" },
-    80: { icon: "\uD83C\uDF26", label: "Rain showers" },
-    81: { icon: "\uD83C\uDF27", label: "Heavy showers" },
-    82: { icon: "\u26C8", label: "Violent showers" },
-    95: { icon: "\u26C8", label: "Thunderstorm" },
-    96: { icon: "\u26C8", label: "Storm with hail" },
-    99: { icon: "\u26C8", label: "Severe hail storm" }
-  };
-
-  return weatherMap[code] || { icon: "\u2601", label: "Conditions unavailable" };
-}

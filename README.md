@@ -1,36 +1,61 @@
-# CS3250-Digital-Signage
+# CS3250 Digital Signage
 
-Static digital signage layout for a vertical Chromium display, designed to run locally on a Raspberry Pi in kiosk mode.
+A browser-based digital signage kiosk for Dr. Steve Beaty's office at MSU Denver's CS Department. Runs fullscreen on a Raspberry Pi at 1080×1800 (portrait). Static HTML/CSS/JS — no build step, no framework.
 
-**Files**
-- `index.html`: page structure
-- `styles.css`: layout, typography, and visual styling
-- `app.js`: clock, weather, RSS, quotes, QR codes, and availability logic
-- `config.json`: editable signage content and feed settings
-- `availability.json`: optional plug-and-play office status
-- `start-kiosk.sh`: Raspberry Pi launcher for local server + Chromium kiosk mode
-- `AI_ATTRIBUTION.md`: AI attribution and implementation note
+---
 
-**Current Features**
-- Analog + digital clock
-- Weather panel using Open-Meteo
-- RSS headlines with per-article QR codes
-- Daily rotating quote from a local quote list
-- Availability / out-of-office card driven by a separate JSON file
-- Raspberry Pi-friendly kiosk startup script
+## Running It
 
-**Client-Editable Files**
-- `config.json`
-- `availability.json`
+```bash
+# Start the local server (includes a CORS proxy — required, do not use python3 -m http.server)
+python3 server.py
 
-The client should not need to edit `index.html`, `styles.css`, or `app.js` for normal day-to-day updates.
+# Open in browser
+http://127.0.0.1:8000/
+```
 
-**Config Notes**
-- `config.json` controls display name, logo, weather, RSS feeds, quotes, and refresh timing.
-- `availability.json` controls whether the availability card is shown and what it says.
-- RSS feeds currently use Google News RSS search feeds plus proxy fallbacks.
+The server must be running for the app to load `config.json`, `availability.json`, and to proxy RSS feeds.
 
-Availability example:
+---
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Page structure — rarely needs editing |
+| `styles.css` | All visual design |
+| `app.js` | Clock, weather, RSS, quotes, QR codes, availability |
+| `utils.js` | Pure utility functions (no DOM/network) — shared by `app.js` and tests |
+| `config.json` | All configurable content — **edit this for day-to-day changes** |
+| `availability.json` | Office in/out status — **edit this to update availability** |
+| `server.py` | Local dev/kiosk server with built-in CORS proxy |
+| `start-kiosk.sh` | Raspberry Pi launcher |
+
+---
+
+## Development
+
+Install dependencies first (one-time):
+
+```bash
+npm install
+```
+
+| Command | What it does |
+|---------|-------------|
+| `npm run lint` | Run ESLint across all JS files |
+| `npm test` | Run Jest unit tests with coverage report |
+| `npm run docs` | Generate JSDoc HTML documentation into `docs/` |
+
+**CI/CD** — GitHub Actions runs lint and tests automatically on every push and pull request. A PR cannot be merged if either check fails. Coverage must stay above 90% or the test run fails.
+
+Tests live in `utils.test.js` and cover the 11 pure utility functions in `utils.js` (date formatting, headline scoring, feed normalization, weather codes, etc.). Functions that require a browser or network are not unit-tested.
+
+---
+
+## Configuration
+
+### `availability.json`
 
 ```json
 {
@@ -40,55 +65,66 @@ Availability example:
 }
 ```
 
-**Run Locally**
-1. Edit `config.json` as needed.
-2. Edit `availability.json` as needed.
-3. Start a local web server and open the site in Chromium.
+Set `"enabled": false` to hide the availability card entirely.
 
-Why a local server is needed:
-- The app uses `fetch()` to load `config.json` and `availability.json`.
-- Opening `index.html` with `file://` can fail in Chromium because of local file restrictions.
+### `config.json`
 
-**Raspberry Pi Setup**
-1. Copy this project folder onto the Raspberry Pi.
-2. Make sure Chromium and Python 3 are installed.
+Controls display name, logo, quotes, weather location, and RSS feeds. The RSS section is the most commonly changed part:
+
+```json
+"rss": {
+  "feeds": [
+    { "feedUrl": "...", "sourceName": "Label" }
+  ],
+  "refreshMinutes": 15
+}
+```
+
+---
+
+## RSS Feeds (Current)
+
+| Source | Why |
+|--------|-----|
+| Ars Technica | Deep technical reporting, strong images |
+| Hacker News (`/best`) | Community-vetted CS/tech, high engagement |
+| Quanta Magazine (CS) | CS theory and research, academic credibility |
+| MIT News (CS) | Direct from MIT CS department, zero editorial risk |
+
+Headlines are scored for engagement — a question-formatted or emotionally resonant headline wins the lead slot regardless of which feed it came from.
+
+---
+
+## Raspberry Pi Setup
+
+1. Copy the project folder to the Pi
+2. Ensure Python 3 and Chromium are installed
 3. Make the launcher executable:
 
 ```bash
 chmod +x start-kiosk.sh
 ```
 
-4. Start the signage:
+4. Run:
 
 ```bash
 ./start-kiosk.sh
 ```
 
-The launcher:
-- starts a tiny local server on `http://127.0.0.1:8000`
-- opens Chromium in kiosk mode
-- avoids local file fetch issues
+This starts `server.py` and opens Chromium in fullscreen kiosk mode.
 
-**Optional Auto-Start On Boot**
-1. Add this line to the Pi user's autostart file:
+**Auto-start on boot** — add to `~/.config/lxsession/LXDE-pi/autostart`:
 
-```bash
+```
 @/home/pi/CS3250-Digital-Signage/start-kiosk.sh
 ```
 
-2. A common autostart file location is:
+---
 
-```bash
-~/.config/lxsession/LXDE-pi/autostart
-```
+## Weather
 
-**RSS Notes**
-- If a feed blocks direct browser access, adjust `rss.proxy` or `rss.proxies` in `config.json`.
-- If a feed still fails through public proxies, use a different feed source or a private server-side proxy.
+Uses [Open-Meteo](https://open-meteo.com/) — free, no API key. Location is set in `config.json` as latitude/longitude.
 
-**Customization**
-- Logos and local images should be placed in the `image/` folder.
-- The hero section currently uses `image/background.jpg`.
-- Quotes are stored locally in `config.json`.
+---
 
-See `AI_ATTRIBUTION.md` for attribution details.
+See `AI_INSTRUCTIONS.md` for full technical and design documentation (intended for AI assistants continuing work on this project).

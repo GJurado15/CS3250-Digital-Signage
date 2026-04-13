@@ -6,18 +6,22 @@
   <title>Digital Signage</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="signage-shell">
     <section class="signage-stage">
+      <div class="top-bar">
+        <span class="top-bar__school">Metropolitan State University of Denver</span>
+        <span class="top-bar__dept">Department of Computer Science</span>
+      </div>
       <header class="hero" id="hero">
         <div class="hero__top-row">
           <div class="hero__logo-wrap">
             <img id="logo" class="hero__logo" alt="Organization logo">
           </div>
-          <div class="hero__identity">
+          <div class="hero__nameplate">
             <h1 id="display-name" class="hero__name">Your Name</h1>
             <section class="availability-card panel" id="availability-card" hidden>
               <div class="availability-card__label">Availability</div>
@@ -41,6 +45,20 @@
               <div class="analog-clock__hand analog-clock__hand--second" id="second-hand"></div>
               <div class="analog-clock__center"></div>
               <div class="analog-clock__ticks" id="clock-ticks"></div>
+              <div class="analog-clock__numerals">
+                <span style="--h:1">1</span>
+                <span style="--h:2">2</span>
+                <span style="--h:3">3</span>
+                <span style="--h:4">4</span>
+                <span style="--h:5">5</span>
+                <span style="--h:6">6</span>
+                <span style="--h:7">7</span>
+                <span style="--h:8">8</span>
+                <span style="--h:9">9</span>
+                <span style="--h:10">10</span>
+                <span style="--h:11">11</span>
+                <span style="--h:12">12</span>
+              </div>
             </div>
             <div class="clock-card__digital">
               <div id="time-text" class="clock-card__time">00:00</div>
@@ -68,16 +86,11 @@
 
   <template id="rss-item-template">
     <article class="rss-item panel">
+      <div class="rss-item__image-col">
+        <img class="rss-item__thumb rss-item__thumb--hidden" alt="">
+      </div>
       <div class="rss-item__body">
         <div class="rss-item__headline">
-          <span class="rss-item__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <circle cx="12" cy="12" r="12"></circle>
-              <circle class="rss-item__icon-dot" cx="7.1" cy="16.9" r="1.9"></circle>
-              <path class="rss-item__icon-arc" d="M6.5 11.5a6 6 0 0 1 6 6"></path>
-              <path class="rss-item__icon-arc" d="M6.5 7a10.5 10.5 0 0 1 10.5 10.5"></path>
-            </svg>
-          </span>
           <h2 class="rss-item__title"></h2>
         </div>
         <div class="rss-item__meta">
