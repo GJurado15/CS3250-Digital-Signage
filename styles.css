@@ -78,7 +78,8 @@ body {
   font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(200,168,72,0.45);
+  color: rgba(222,191,99,0.78);
+  text-shadow: 0 0.04cqw 0 rgba(0,0,0,0.45);
   display: flex;
   align-items: center;
   gap: 1.2cqw;
@@ -145,9 +146,12 @@ body {
   font-size: 1.15cqw;
   letter-spacing: 0.44em;
   font-weight: 700;
-  color: rgba(26,22,8,0.2);
+  color: rgba(26,22,8,0.36);
   text-transform: uppercase;
   white-space: nowrap;
+  text-shadow:
+    0 0.08cqw 0 rgba(255,255,255,0.42),
+    0 0.12cqw 0.3cqw rgba(26,22,8,0.1);
   z-index: 0;
   pointer-events: none;
 }
@@ -170,8 +174,15 @@ body {
   width: 72%;
   height: auto;
   display: block;
-  filter: saturate(0) brightness(0.2) sepia(1) hue-rotate(25deg);
-  opacity: 0.45;
+  opacity: 0.74;
+  mix-blend-mode: multiply;
+  filter:
+    saturate(0)
+    brightness(0.14)
+    contrast(1.28)
+    sepia(1)
+    hue-rotate(18deg)
+    drop-shadow(0 0.08cqw 0 rgba(255,255,255,0.26));
 }
 
 /* Nameplate — signed dial, right side */
@@ -194,7 +205,8 @@ body {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(26,22,8,0.28);
+  color: #3f3c35;
+  text-shadow: 0 0.05cqw 0 rgba(255,255,255,0.35);
   order: -1;
   white-space: nowrap;
 }
@@ -498,8 +510,10 @@ body {
 
 /* Hands — blued steel */
 .analog-clock__hand {
-  inset: 50% auto auto 50%;
+  top: 50%;
+  left: 50%;
   transform-origin: bottom center;
+  transform: translate(-50%, -100%) rotate(var(--hand-angle, 0deg));
 }
 
 .analog-clock__hand--hour {
@@ -507,8 +521,6 @@ body {
   height: 25%;
   /* Polished blued steel — brighter highlight stripe */
   background: linear-gradient(90deg, #1a2038 0%, #3a4e80 40%, #1c2848 60%, #0e1428 100%);
-  margin-left: -2%;
-  margin-top: -25%;
   border-radius: 2% 2% 0 0;
   box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.7);
 }
@@ -517,8 +529,6 @@ body {
   width: 2.8%;
   height: 38%;
   background: linear-gradient(90deg, #1a2038 0%, #3a4e80 40%, #1c2848 60%, #0e1428 100%);
-  margin-left: -1.4%;
-  margin-top: -38%;
   border-radius: 1.4% 1.4% 0 0;
   box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.7);
 }
@@ -528,8 +538,6 @@ body {
   width: 0.65%;
   height: 48%;
   background: linear-gradient(180deg, #c8102e 0%, #c8102e 80%, rgba(200,16,46,0.4) 100%);
-  margin-left: -0.325%;
-  margin-top: -42%;
   border-radius: 0.5%;
   box-shadow: 0 0.1cqw 0.5cqw rgba(200,16,46,0.5);
 }

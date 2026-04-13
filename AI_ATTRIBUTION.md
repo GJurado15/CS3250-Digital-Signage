@@ -108,3 +108,14 @@ AI-assisted work in this session includes:
 - Refined hero layout to make the clock the true visual centerpiece
 - Committed as: "Vintage watch Mode 1: Sector Dial — cream/charcoal/brass theme"
 - Opened a live Chromium window during iteration for real-time F5 preview
+
+---
+
+## Session - April 13, 2026
+
+AI-assisted work in this session includes:
+- Fixed analog clock hand alignment so the seconds hand rotates from the true visual center of the dial
+- Updated clock rotation logic in `app.js` to drive hand angles through the `--hand-angle` CSS custom property instead of replacing the full `transform`
+- Refined clock hand positioning in `styles.css` by switching from negative margin offsets to centered `top`/`left` placement with translated rotation
+- Darkened decorative watch-theme hero elements for better legibility: the background "COMPUTER SCIENCE" dial text, the top-bar "Department of Computer Science" line, the professor subtitle line, and the hero logo treatment
+- Set the professor subtitle color to `#3f3c35` as a final targeted styling adjustment

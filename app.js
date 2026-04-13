@@ -136,9 +136,9 @@ function startClock(timezone) {
     const minuteRotation = minutes * 6 + seconds * 0.1;
     const secondRotation = seconds * 6;
 
-    hourHand.style.transform = `rotate(${hourRotation}deg)`;
-    minuteHand.style.transform = `rotate(${minuteRotation}deg)`;
-    secondHand.style.transform = `rotate(${secondRotation}deg)`;
+    hourHand.style.setProperty("--hand-angle", `${hourRotation}deg`);
+    minuteHand.style.setProperty("--hand-angle", `${minuteRotation}deg`);
+    secondHand.style.setProperty("--hand-angle", `${secondRotation}deg`);
 
     timeText.textContent = timeFormatter.format(now);
     dateText.textContent = dateFormatter.format(now);
