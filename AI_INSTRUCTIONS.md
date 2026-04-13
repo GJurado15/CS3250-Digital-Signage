@@ -1,4 +1,4 @@
-# CLAUDE.md — AI Agent Guide
+# AI_INSTRUCTIONS.md — AI Agent Guide
 
 This document is written for an AI assistant picking up this project cold. It contains everything needed to understand, run, and improve the display without re-deriving context from the code.
 

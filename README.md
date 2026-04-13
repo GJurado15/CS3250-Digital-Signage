@@ -127,4 +127,4 @@ Uses [Open-Meteo](https://open-meteo.com/) — free, no API key. Location is set
 
 ---
 
-See `CLAUDE.md` for full technical and design documentation (intended for AI assistants continuing work on this project).
+See `AI_INSTRUCTIONS.md` for full technical and design documentation (intended for AI assistants continuing work on this project).
