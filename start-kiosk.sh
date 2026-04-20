@@ -7,10 +7,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$SCRIPT_DIR"
 
-pkill -f "python3 -m http.server ${PORT}" 2>/dev/null || true
+pkill -f "python3 server.py" 2>/dev/null || true
 pkill -f "chromium.*localhost:${PORT}" 2>/dev/null || true
 
-python3 -m http.server "$PORT" --bind 127.0.0.1 >/tmp/cs3250-signage-server.log 2>&1 &
+python3 server.py >/tmp/cs3250-signage-server.log 2>&1 &
 SERVER_PID=$!
 
 sleep 2
