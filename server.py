@@ -9,7 +9,7 @@ Everything else               — served as static files from the current direct
 """
 import urllib.request
 import urllib.parse
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 TIMEOUT = 10
 PORT = 8000
@@ -53,7 +53,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server = HTTPServer(("", PORT), Handler)
+    server = ThreadingHTTPServer(("", PORT), Handler)
     print(f"Serving on http://127.0.0.1:{PORT}/")
     print("CTRL+C to stop")
     try:
