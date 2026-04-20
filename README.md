@@ -121,6 +121,23 @@ This starts `server.py` and opens Chromium in fullscreen kiosk mode.
 
 ---
 
+## Watch Themes
+
+The analog clock cycles through 6 vintage watch dial archetypes — one per day, stable across page reloads:
+
+| Theme | Archetype |
+|---|---|
+| Sector | 1930s two-tone cream/brass with Railmaster crosshair |
+| Diver | Submariner-style black dial, luminous pips, bezel numbers |
+| Flieger | B-Uhr pilot watch, oversized Arabic numerals, triangle at 12 |
+| Dress | Minimal silver dial with Playfair Display italic Roman numerals |
+| Field | Hamilton Khaki-inspired, warm khaki dial, cardinal numerals only |
+| Chrono | Speedmaster panda dial with three decorative subdials at 3/6/9 |
+
+To force a specific theme during development, add `?theme=diver` (or any theme name) to the URL.
+
+---
+
 ## Weather
 
 Uses [Open-Meteo](https://open-meteo.com/) — free, no API key. Location is set in `config.json` as latitude/longitude.

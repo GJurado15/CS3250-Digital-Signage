@@ -1,5 +1,5 @@
 import {
-  scoreHeadline, summarize, formatFeedDate,
+  summarize, formatFeedDate,
   stripTrailingSource, buildQrCodeUrl,
   getQuoteDayIndex, describeWeather, normalizeRssFeeds, normalizeRssProxies
 } from "./utils.js";
@@ -24,11 +24,22 @@ const weatherDesc = document.getElementById("weather-desc");
 const weatherIcon = document.getElementById("weather-icon");
 const quoteText = document.getElementById("quote-text");
 const quoteAuthor = document.getElementById("quote-author");
-const rssList = document.getElementById("rss-list");
+const rssSlider = document.getElementById("rss-slider");
+const rssDots = document.getElementById("rss-dots");
 const rssTemplate = document.getElementById("rss-item-template");
+
+const watchThemes = ["watch--sector", "watch--diver", "watch--flieger", "watch--dress", "watch--field", "watch--chrono"];
 
 let activeConfig;
 let rssRefreshTimer;
+let rssSlideInterval;
+
+function fetchWithTimeout(url, options = {}, ms = 7000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(id));
+}
 
 buildClockTicks();
 boot();
@@ -42,6 +53,7 @@ async function boot() {
 
     activeConfig = await response.json();
     applyBranding(activeConfig);
+    applyWatchTheme(activeConfig.timezone || "America/Denver");
     startClock(activeConfig.timezone || "America/Denver");
     renderQuote(activeConfig.quotes);
     await Promise.allSettled([
@@ -54,6 +66,23 @@ async function boot() {
     renderRssFallback("Configuration could not be loaded.");
     weatherDesc.textContent = "Weather unavailable";
   }
+}
+
+function applyWatchTheme(timezone) {
+  const params = new URLSearchParams(window.location.search);
+  const forced = params.get("theme");
+  const clock = document.querySelector(".analog-clock");
+
+  let theme;
+  if (forced && watchThemes.includes(`watch--${forced}`)) {
+    theme = `watch--${forced}`;
+  } else {
+    const dayIndex = getQuoteDayIndex(timezone);
+    theme = watchThemes[dayIndex % watchThemes.length];
+  }
+
+  watchThemes.forEach((t) => clock.classList.remove(t));
+  clock.classList.add(theme);
 }
 
 function applyBranding(config) {
@@ -197,6 +226,7 @@ async function loadWeather(weatherConfig = {}) {
 async function loadRss(rssConfig = {}) {
   const feeds = normalizeRssFeeds(rssConfig);
   scheduleRssRefresh(rssConfig);
+  stopRssRotation();
 
   if (!feeds.length) {
     renderRssFallback("Add at least one RSS feed URL in config.json.");
@@ -210,70 +240,38 @@ async function loadRss(rssConfig = {}) {
       feeds.map((feed) => fetchRssFeed(feed, proxyTemplates))
     );
 
-    // Per-feed items sorted by recency, take top 3 as lead candidates
-    const allFeedItems = feedResults
+    const successfulFeeds = feedResults
       .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value.sort((a, b) => b.timestamp - a.timestamp));
+      .map((result) => result.value);
 
-    // Pick lead: highest engagement score across top 3 from each feed
-    const leadCandidates = allFeedItems.flatMap((items) => items.slice(0, 3));
-    const lead = leadCandidates
-      .map((item) => ({ item, score: scoreHeadline(item.title) }))
-      .sort((a, b) => b.score - a.score || b.item.timestamp - a.item.timestamp)[0]?.item;
-
-    // Fill remaining slots: most recent from each feed that isn't the lead
-    const secondaries = allFeedItems
-      .map((feedItems) => feedItems.find((item) => item !== lead))
-      .filter(Boolean)
+    const maxPerFeed = Math.ceil(20 / Math.max(successfulFeeds.length, 1));
+    const allItems = successfulFeeds
+      .flatMap((feedItems) =>
+        feedItems
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, maxPerFeed)
+      )
       .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, feeds.length - 1);
+      .slice(0, 20);
 
-    const items = lead ? [lead, ...secondaries] : secondaries;
-
-    if (!items.length) {
+    if (!allItems.length) {
       renderRssFallback("RSS feeds unavailable. Check the feed URLs or proxy in config.json.");
       return;
     }
 
-    // Fill in missing images by scraping og:image from article pages
-    await Promise.allSettled(
-      items
-        .filter((item) => !item.image && item.link)
-        .map(async (item) => {
-          item.image = await fetchOgImage(item.link, proxyTemplates);
-        })
-    );
+    const pages = [];
+    for (let i = 0; i < allItems.length; i += 4) {
+      pages.push(allItems.slice(i, i + 4));
+    }
 
-    rssList.innerHTML = "";
+    renderRssPages(pages, rssConfig);
 
-    items.forEach((item) => {
-      const node = rssTemplate.content.firstElementChild.cloneNode(true);
-      node.querySelector(".rss-item__title").textContent = item.title;
-      node.querySelector(".rss-item__source").textContent = item.source;
-      node.querySelector(".rss-item__date").textContent = formatFeedDate(item.dateValue);
-      node.querySelector(".rss-item__summary").textContent = summarize(item.description, rssConfig.summaryLength || 170);
+    if (pages.length > 1) {
+      startRssRotation(pages.length);
+    }
 
-      const thumb = node.querySelector(".rss-item__thumb");
-      const qrImage = node.querySelector(".rss-item__qr-image");
-
-      if (item.image) {
-        thumb.src = item.image;
-        thumb.alt = item.title;
-        thumb.classList.remove("rss-item__thumb--hidden");
-        node.classList.add("rss-item--has-image");
-      }
-
-      if (item.link) {
-        qrImage.src = buildQrCodeUrl(item.link);
-        qrImage.alt = `QR code for ${item.title}`;
-      } else {
-        qrImage.removeAttribute("src");
-        qrImage.alt = "QR code unavailable";
-      }
-
-      rssList.appendChild(node);
-    });
-
+    // Fill in OG images after render — don't block content display
+    fillOgImages(allItems, proxyTemplates);
   } catch (error) {
     console.error(error);
     renderRssFallback("RSS feeds unavailable. Check the feed URLs or proxy in config.json.");
@@ -295,13 +293,104 @@ function scheduleRssRefresh(rssConfig) {
   );
 }
 
+function renderRssPages(pages, rssConfig) {
+  rssSlider.style.transform = "translateY(0)";
+  rssSlider.innerHTML = "";
+  rssDots.innerHTML = "";
+
+  pages.forEach((pageItems, pageIndex) => {
+    const page = document.createElement("div");
+    page.className = "rss-page";
+
+    pageItems.forEach((item) => {
+      const node = rssTemplate.content.firstElementChild.cloneNode(true);
+      node.querySelector(".rss-item__title").textContent = item.title;
+      node.querySelector(".rss-item__source").textContent = item.source;
+      node.querySelector(".rss-item__date").textContent = formatFeedDate(item.dateValue);
+      node.querySelector(".rss-item__summary").textContent = summarize(item.description, rssConfig.summaryLength || 170);
+
+      const thumb = node.querySelector(".rss-item__thumb");
+      const qrImage = node.querySelector(".rss-item__qr-image");
+
+      if (item.image) {
+        thumb.src = item.image;
+        thumb.alt = item.title;
+        thumb.classList.remove("rss-item__thumb--hidden");
+        node.classList.add("rss-item--has-image");
+        thumb.onerror = () => {
+          thumb.classList.add("rss-item__thumb--hidden");
+          node.classList.remove("rss-item--has-image");
+        };
+      }
+
+      if (item.link) {
+        node.dataset.link = item.link;
+        qrImage.src = buildQrCodeUrl(item.link);
+        qrImage.alt = `QR code for ${item.title}`;
+      } else {
+        qrImage.removeAttribute("src");
+        qrImage.alt = "QR code unavailable";
+      }
+
+      page.appendChild(node);
+    });
+
+    rssSlider.appendChild(page);
+
+    const dot = document.createElement("span");
+    dot.className = "rss-dot" + (pageIndex === 0 ? " rss-dot--active" : "");
+    rssDots.appendChild(dot);
+  });
+}
+
+function startRssRotation(pageCount) {
+  let currentPage = 0;
+  rssSlideInterval = setInterval(() => {
+    currentPage = (currentPage + 1) % pageCount;
+    const viewportHeight = rssSlider.parentElement.clientHeight;
+    rssSlider.style.transform = `translateY(-${currentPage * viewportHeight}px)`;
+    rssDots.querySelectorAll(".rss-dot").forEach((dot, i) => {
+      dot.classList.toggle("rss-dot--active", i === currentPage);
+    });
+  }, 15000);
+}
+
+function stopRssRotation() {
+  if (rssSlideInterval) {
+    clearInterval(rssSlideInterval);
+    rssSlideInterval = null;
+  }
+}
+
+async function fillOgImages(items, proxyTemplates) {
+  await Promise.allSettled(
+    items
+      .filter((item) => !item.image && item.link)
+      .map(async (item) => {
+        const image = await fetchOgImage(item.link, proxyTemplates);
+        if (!image) return;
+        const node = rssSlider.querySelector(`[data-link="${CSS.escape(item.link)}"]`);
+        if (!node) return;
+        const thumb = node.querySelector(".rss-item__thumb");
+        thumb.src = image;
+        thumb.alt = item.title;
+        thumb.classList.remove("rss-item__thumb--hidden");
+        node.classList.add("rss-item--has-image");
+        thumb.onerror = () => {
+          thumb.classList.add("rss-item__thumb--hidden");
+          node.classList.remove("rss-item--has-image");
+        };
+      })
+  );
+}
+
 async function fetchRssFeed(feed, proxyTemplates) {
   let lastError;
 
   for (const proxyTemplate of proxyTemplates) {
     try {
       const feedUrl = proxyTemplate.replace("{url}", encodeURIComponent(feed.feedUrl));
-      const response = await fetch(feedUrl, { cache: "no-store" });
+      const response = await fetchWithTimeout(feedUrl, { cache: "no-store" });
       if (!response.ok) {
         throw new Error(`RSS request failed with status ${response.status}`);
       }
@@ -319,7 +408,7 @@ async function fetchRssFeed(feed, proxyTemplates) {
               (item.enclosure?.type?.startsWith("image/") ? item.enclosure.link : null) ||
               null;
             return {
-              title: normalizeFeedText(item.title || "Untitled"),
+              title: normalizeFeedText(item.title || "Untitled", 0) || "Untitled",
               source: feed.sourceName,
               dateValue: item.pubDate,
               timestamp: Number.isNaN(parsedDate) ? 0 : parsedDate,
@@ -376,7 +465,14 @@ async function fetchRssFeed(feed, proxyTemplates) {
 }
 
 function renderRssFallback(message) {
-  rssList.innerHTML = "";
+  stopRssRotation();
+  rssSlider.style.transform = "translateY(0)";
+  rssSlider.innerHTML = "";
+  rssDots.innerHTML = "";
+
+  const page = document.createElement("div");
+  page.className = "rss-page";
+
   for (let index = 0; index < 4; index += 1) {
     const node = rssTemplate.content.firstElementChild.cloneNode(true);
     node.querySelector(".rss-item__title").textContent = "Waiting For Headlines";
@@ -390,8 +486,10 @@ function renderRssFallback(message) {
     qrImage.removeAttribute("src");
     qrImage.alt = "QR code unavailable";
     qrImage.classList.add("rss-item__qr-image--empty");
-    rssList.appendChild(node);
+    page.appendChild(node);
   }
+
+  rssSlider.appendChild(page);
 }
 
 function extractFeedLink(item) {
@@ -404,7 +502,7 @@ async function fetchOgImage(articleUrl, proxyTemplates) {
   for (const proxyTemplate of proxyTemplates) {
     try {
       const proxyUrl = proxyTemplate.replace("{url}", encodeURIComponent(articleUrl));
-      const response = await fetch(proxyUrl, { cache: "no-store" });
+      const response = await fetchWithTimeout(proxyUrl, { cache: "no-store" }, 5000);
       if (!response.ok) continue;
       const html = await response.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -450,7 +548,7 @@ function extractFeedImage(item) {
 }
 
 function extractFeedTitle(item, fallbackSource) {
-  const rawTitle = normalizeFeedText(item.querySelector("title")?.textContent || "Untitled");
+  const rawTitle = normalizeFeedText(item.querySelector("title")?.textContent || "Untitled", 0) || "Untitled";
   const sourceFromFeed = normalizeFeedText(
     item.querySelector("source")?.textContent ||
     item.querySelector("source > title")?.textContent ||
@@ -481,7 +579,7 @@ function extractFeedTitle(item, fallbackSource) {
   };
 }
 
-function normalizeFeedText(text) {
+function normalizeFeedText(text, minLength = 30) {
   // Decode HTML entities via a throwaway element, then strip any remaining tags
   const el = document.createElement("div");
   el.innerHTML = text.replace(/<[^>]*>/g, " ");
@@ -493,7 +591,7 @@ function normalizeFeedText(text) {
     .replace(/\s+/g, " ")
     .trim();
   // If what's left is too short to be real content (metadata remnants), discard it
-  return cleaned.length < 30 ? "" : cleaned;
+  return cleaned.length < minLength ? "" : cleaned;
 }
 
 

@@ -119,3 +119,21 @@ AI-assisted work in this session includes:
 - Refined clock hand positioning in `styles.css` by switching from negative margin offsets to centered `top`/`left` placement with translated rotation
 - Darkened decorative watch-theme hero elements for better legibility: the background "COMPUTER SCIENCE" dial text, the top-bar "Department of Computer Science" line, the professor subtitle line, and the hero logo treatment
 - Set the professor subtitle color to `#3f3c35` as a final targeted styling adjustment
+
+---
+
+## Session — April 20, 2026 (watch theme system)
+
+AI-assisted work in this session includes:
+- Designed and implemented a 6-theme daily-cycling watch dial system; theme is selected by day-of-year index using the existing `getQuoteDayIndex()` function, ensuring stable daily rotation
+- Added `?theme=<name>` query parameter for force-previewing any theme during development
+- Built 6 complete CSS watch archetypes, each scoped to `.analog-clock.watch--<name>` to avoid any layout side-effects:
+  - **Sector** — original cream/brass sector dial; added Omega Railmaster-style hairline crosshair dividing the dial into quadrants
+  - **Diver** — Submariner-inspired: matte black dial, luminous round pips at all hours, inverted-triangle marker at 12, vertical batons at 3/6/9, lume-filled silver hands, red seconds, brushed steel bezel ring with minute graduation ticks and numbers at 10/20/30/40/50
+  - **Flieger** — B-Uhr pilot watch: pure black dial, all 12 large white Arabic numerals, triangle-at-12 marker, clean sword hands
+  - **Dress** — minimal silver/white dial, italic Playfair Display Roman numerals (I–XII) via CSS `::before` content on numeral spans using `nth-child` selectors, hair-thin dauphine hands, ultra-restrained
+  - **Field** — Hamilton Khaki-inspired: warm khaki/olive dial (distinct palette from flieger), cardinals-only numerals (12/3/6/9), thick railroad baton markers, broad arrow hands
+  - **Chrono** — Speedmaster panda dial: cream center + dark outer tachymeter ring; three recessed subdials at 3/6/9 rendered entirely as layered CSS background radial-gradients; subdial hands and center pivot pins drawn as background linear-gradients at exact subdial coordinates; tick-mark dots around each subdial perimeter
+- Replaced all `"MSU · DENVER"` dial text across every theme with `"AUDEMARS BEATY"` — a pun on Audemars Piguet using the professor's surname; repositioned from bottom-of-dial to top-of-dial (correct watchmaking convention, just below 12 o'clock)
+- Added per-theme color override for `::after` text on cream dials (sector/dress) so the brand name is legible against the light background
+- Saved reference screenshots for all 6 themes in the project root (`signage-<theme>.png`)
