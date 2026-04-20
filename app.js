@@ -252,11 +252,10 @@ async function loadRss(rssConfig = {}) {
         })
     );
 
-    // Display "Dark Visitor" transition screen for 3 seconds before rendering the new items
+    // Display transition screen for 3 seconds before rendering the new items
     rssList.innerHTML = `
       <div style="grid-row: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--brass); text-align: center;">
         <div style="font-size: 18cqw; line-height: 1; font-weight: 900; text-shadow: 0 0 5cqw rgba(200,168,72,0.4);">黑客</div>
-        <div style="font-size: 2.5cqw; letter-spacing: 0.5em; text-transform: uppercase; margin-top: 1cqw; opacity: 0.7;">Dark Visitor</div>
       </div>
     `;
     await new Promise((resolve) => window.setTimeout(resolve, 3000));
