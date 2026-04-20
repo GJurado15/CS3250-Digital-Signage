@@ -120,7 +120,7 @@ Top bar:       dark charcoal (#2e2a1e)
 - UI: Inter (sans-serif, weights 100–900)
 - Quotes: Playfair Display (serif, italic)
 
-**Visual theme:** Vintage watch — Mode 1 (Sector Dial, 1930s American two-tone). See planned modes below.
+**Visual theme:** Vintage watch — 6 daily-cycling dial archetypes. See Watch Theme System below and `watchcreation.md` for the full technical guide.
 
 ---
 
@@ -242,12 +242,14 @@ A `?theme=<name>` query parameter forces a specific theme for development/previe
 
 | Class | Archetype | Key traits |
 |---|---|---|
-| `watch--sector` | Sector dial | Cream/brass two-tone, Railmaster hairline crosshair |
-| `watch--diver` | Submariner diver | Black dial, luminous pips, inverted-triangle at 12, batons at 3/6/9, bezel numbers |
-| `watch--flieger` | B-Uhr pilot | Black dial, all 12 large white Arabic numerals, triangle at 12 |
-| `watch--dress` | Dress watch | Silver/white dial, Playfair Display italic Roman numerals (I–XII), dauphine hands |
-| `watch--field` | Field/military | Warm khaki dial, cardinals-only (12/3/6/9), railroad baton markers, broad arrow hands |
-| `watch--chrono` | Panda chronograph | Cream center + dark tachymeter ring, 3 subdials at 3/6/9 with hands and tick rings |
+| `watch--sector` | Sector dial | Cream/brass two-tone, hairline crosshair, cobalt blued-steel hands, brass center jewel |
+| `watch--diver` | Submariner diver | Black dial, multi-layer glowing lume pips, inverted-triangle at 12, lume-stripe hands |
+| `watch--flieger` | B-Uhr pilot | Matte black, all 12 large white Arabic numerals, triangle at 12, sword hands with lume stripe |
+| `watch--dress` | Dress watch | Silver/champagne dial, Playfair Display italic Roman numerals (I–XII), dauphine hands |
+| `watch--field` | Field/military | Warm khaki/olive dial (distinctly lighter than flieger), cardinals-only, broad arrow hands |
+| `watch--chrono` | Panda chronograph | Cream center + dark tachymeter ring, 3 CSS-only subdials with tick rings and hand lines |
+
+**Critical distinction — flieger vs field:** flieger is near-black (`#1c1c1c`), field is warm khaki (`#7a7050`). They must never look the same.
 
 ### How themes work
 
@@ -263,9 +265,9 @@ Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Overrides cov
 
 **Roman numerals (dress):** Arabic numeral spans have `font-size: 0; color: transparent` and the Roman numeral is set via `::before { content: "XII" }` using `nth-child` selectors (1–12 in DOM order).
 
-**Diver pips:** Numeral spans have `font-size: 0` and display a luminous dot via `::before` — round for standard hours, elongated baton for 3/6/9, inverted triangle for 12.
+**Diver pips:** Numeral spans have `font-size: 0` and display a luminous dot via `::before` — round for standard hours, elongated baton for 3/6/9, inverted triangle for 12. Glow requires both `box-shadow` AND `filter: drop-shadow()` — `box-shadow` alone is clipped by the parent circle.
 
-**Chrono subdials:** Three recessed circles are rendered entirely as layered `radial-gradient` entries in `.analog-clock.watch--chrono`'s `background`. Hands and center pins are `linear-gradient` layers at the exact subdial coordinates (30%/50%, 70%/50%, 50%/70%).
+**Chrono subdials:** Three recessed circles rendered entirely as layered `radial-gradient` entries in `background`. Gradient stop percentages are relative to the farthest-corner distance from the gradient center, not the element width — `13%` stop ≈ 3.1cqw subdial radius at 28cqw clock size. Each subdial also needs border ring, 8 tick dots, hand line, and pivot pin as separate gradient layers. See `watchcreation.md` for the full pattern.
 
 ### Brand name
 
@@ -282,6 +284,9 @@ All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's sur
 - `cqw` units throughout — scales perfectly to any viewport
 - `filter: contrast(1.03) saturate(0.92)` on the whole stage — subtle cinematic grade
 - Per-feed top-3 candidate pool for lead scoring (not just top-1)
+- Watch lume glows: `box-shadow` + `filter: drop-shadow()` stack for true luminous effect
+- Chrono subdials entirely in CSS `background` gradients — zero extra DOM elements
+- `clip-path: polygon(...)` on hand elements for broad-arrow and dauphine shapes
 
 ## Things That Don't Work / Pitfalls
 
@@ -292,3 +297,6 @@ All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's sur
 - Animations in screenshots — headless Chrome freezes at snapshot time
 - The browser caches JS/CSS aggressively — tell users Ctrl+Shift+R or disable cache in DevTools
 - `0` as a CSS grid track size — causes layout artifacts; use `display:none` on the element instead
+- Lume `box-shadow` glow on watch pips is clipped by the parent circle — always pair with `filter: drop-shadow()`
+- Chrono subdial gradient stops are % of farthest-corner distance, not element width — small % values produce tiny subdials
+- Brand text `::after` defaults to cream — light-dial themes (sector, dress) must override to dark ink

@@ -137,3 +137,21 @@ AI-assisted work in this session includes:
 - Replaced all `"MSU · DENVER"` dial text across every theme with `"AUDEMARS BEATY"` — a pun on Audemars Piguet using the professor's surname; repositioned from bottom-of-dial to top-of-dial (correct watchmaking convention, just below 12 o'clock)
 - Added per-theme color override for `::after` text on cream dials (sector/dress) so the brand name is legible against the light background
 - Saved reference screenshots for all 6 themes in the project root (`signage-<theme>.png`)
+
+---
+
+## Session — April 20, 2026 (watch dial polish)
+
+AI-assisted work in this session includes:
+- Executed 5 screenshot-loop polish passes across all 6 watch dial archetypes using headless Chromium at 1080×1800
+- Enlarged clock from 26cqw to 28cqw for greater visual presence in the hero
+- **Sector**: Strengthened Railmaster crosshair (0.09cqw, 0.22 opacity), added thin gold ring at sector boundary, richer guilloché sunburst, hands recolored to deep cobalt/indigo blued-steel
+- **Diver**: Complete lume overhaul — multi-layer `box-shadow` + `filter: drop-shadow()` stack for tritium-style glow on all pips; 12 o'clock triangle enlarged (190% width) with glow; hour/minute hands rebuilt with a center lume-fill stripe; larger brushed-steel center jewel
+- **Flieger**: Sword hands rebuilt with lume center stripe and box-shadow; red seconds hand added; center jewel enlarged with polished radial gradient
+- **Dress**: Roman numerals made substantially more readable (opacity 0.75→0.92, cardinals 0.85→0.92, font-weight 300→400/600); dial lifted to richer champagne gradient; dauphine hands given proper polished 5-stop gradient and new red seconds
+- **Field**: Complete palette lift from near-black (`#3e3a28`) to warm khaki/olive (`#7a7050`) — now unmistakably distinct from flieger; broad arrow hands improved with 5-stop gradient; cardinal numerals brightened; inner ring border made visible
+- **Chrono**: Subdials grew from barely-visible 7.5% radius to 13% with a recessed cream fill, outer border ring, 8 tick dots per subdial, and visible hand lines pointing to 12-position; red-ring center jewel (Speedmaster-style); polished dark main hands with 5-stop gradient
+- Crystal dome highlight on `.analog-clock__face` upgraded with a rim shimmer ring for sapphire crystal depth
+- Global center jewel (sector default) enlarged to 7.5% with richer 4-stop brass gradient and stronger shadow stack
+- Created `watchcreation.md` — a technical reference covering DOM structure, CSS techniques (lume pips, Roman numerals, subdials, clip-path hands), visual differentiation rules, and known pitfalls
+- Saved polished reference screenshots as `watch-polish-<theme>.png` for all 6 themes
