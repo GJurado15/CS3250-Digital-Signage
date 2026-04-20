@@ -169,7 +169,7 @@
     "perFeed": 1,
     "titleLines": 2,
     "summaryLength": 170,
-    "refreshMinutes": 15,
+    "refreshMinutes": 1,
     "proxies": [
       "http://127.0.0.1:8000/proxy?url={url}",
       "https://api.rss2json.com/v1/api.json?rss_url={url}",

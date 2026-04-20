@@ -491,28 +491,25 @@ body {
   background: rgba(240,228,190,0.6);
   left: 50%;
   top: 3%;
-  transform-origin: 50% 1175%;   /* anchors rotation at clock center */
-  transform: translateX(-50%) rotate(calc(var(--tick-angle)));
+  transform: translateX(-50%);
   border-radius: 1px;
 }
 
 /* Major tick marks (every 5th = hour positions) — brass */
-.analog-clock__ticks span:nth-child(5n + 1) {
+.analog-clock__ticks span:nth-child(5n + 1)::before {
   height: 7%;
   top: 1%;
   width: 1.3%;
   background: rgba(200,168,72,0.95);
-  transform-origin: 50% 700%;
 }
 
 /* 12 o'clock crown — elongated and bright */
-.analog-clock__ticks span:nth-child(1) {
+.analog-clock__ticks span:nth-child(1)::before {
   height: 9%;
   top: 0%;
   width: 2%;
   background: rgba(200,168,72,1);
   box-shadow: 0 0 0.4cqw rgba(200,168,72,0.6);
-  transform-origin: 50% 556%;
 }
 
 /* Hands — blued steel */

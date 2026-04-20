@@ -29,6 +29,7 @@ const rssTemplate = document.getElementById("rss-item-template");
 
 let activeConfig;
 let rssRefreshTimer;
+let rssCycleIndex = 0;
 
 buildClockTicks();
 boot();
@@ -210,20 +211,27 @@ async function loadRss(rssConfig = {}) {
       feeds.map((feed) => fetchRssFeed(feed, proxyTemplates))
     );
 
-    // Per-feed items sorted by recency, take top 3 as lead candidates
+    // Per-feed items sorted by recency
     const allFeedItems = feedResults
       .filter((result) => result.status === "fulfilled")
       .map((result) => result.value.sort((a, b) => b.timestamp - a.timestamp));
 
-    // Pick lead: highest engagement score across top 3 from each feed
-    const leadCandidates = allFeedItems.flatMap((items) => items.slice(0, 3));
+    // Cycle through older articles so the screen isn't static on every refresh
+    const offset = rssCycleIndex % 10;
+    rssCycleIndex += 1;
+
+    // Pick lead: highest engagement score across a sliding window of candidates per feed
+    const leadCandidates = allFeedItems.flatMap((items) => {
+      const safeOffset = Math.min(offset, Math.max(0, items.length - 1));
+      return items.slice(safeOffset, safeOffset + 3);
+    });
     const lead = leadCandidates
       .map((item) => ({ item, score: scoreHeadline(item.title) }))
       .sort((a, b) => b.score - a.score || b.item.timestamp - a.item.timestamp)[0]?.item;
 
-    // Fill remaining slots: most recent from each feed that isn't the lead
+    // Fill remaining slots: the next available item from each feed based on the offset
     const secondaries = allFeedItems
-      .map((feedItems) => feedItems.find((item) => item !== lead))
+      .map((feedItems) => feedItems.find((item, index) => item !== lead && index >= offset) || feedItems.find((item) => item !== lead))
       .filter(Boolean)
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, feeds.length - 1);
@@ -243,6 +251,15 @@ async function loadRss(rssConfig = {}) {
           item.image = await fetchOgImage(item.link, proxyTemplates);
         })
     );
+
+    // Display "Dark Visitor" transition screen for 3 seconds before rendering the new items
+    rssList.innerHTML = `
+      <div style="grid-row: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--brass); text-align: center;">
+        <div style="font-size: 18cqw; line-height: 1; font-weight: 900; text-shadow: 0 0 5cqw rgba(200,168,72,0.4);">黑客</div>
+        <div style="font-size: 2.5cqw; letter-spacing: 0.5em; text-transform: uppercase; margin-top: 1cqw; opacity: 0.7;">Dark Visitor</div>
+      </div>
+    `;
+    await new Promise((resolve) => window.setTimeout(resolve, 3000));
 
     rssList.innerHTML = "";
 
@@ -495,5 +512,3 @@ function normalizeFeedText(text) {
   // If what's left is too short to be real content (metadata remnants), discard it
   return cleaned.length < 30 ? "" : cleaned;
 }
-
-
