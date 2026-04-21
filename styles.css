@@ -273,7 +273,7 @@ body {
 
 /* ── OFFICE HOURS — complication panel ── */
 .office-hours-card {
-  justify-self: end;
+  justify-self: center;
   margin-top: 8cqw;
   display: flex;
   flex-direction: column;
@@ -692,7 +692,7 @@ body {
 
 /* ── WEATHER — circular subdial complication ── */
 .weather-card {
-  justify-self: start;
+  justify-self: center;
   margin-top: 8cqw;
   display: flex;
   flex-direction: column;
