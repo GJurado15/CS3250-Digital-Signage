@@ -1,0 +1,8 @@
+{
+  "location": "CN 204",
+  "schedule": [
+    { "day": "Mon", "time": "10:00–11:00 AM" },
+    { "day": "Wed", "time": "10:00–11:00 AM" },
+    { "day": "Fri", "time":  "2:00–3:00 PM"  }
+  ]
+}

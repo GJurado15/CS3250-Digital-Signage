@@ -42,13 +42,20 @@ boot();
 
 async function boot() {
   try {
-    const response = await fetch(configUrl, { cache: "no-store" });
-    if (!response.ok) {
+    const [configRes, officeHoursRes] = await Promise.all([
+      fetch(configUrl, { cache: "no-store" }),
+      fetch("office-hours.json", { cache: "no-store" }).catch(() => null)
+    ]);
+
+    if (!configRes.ok) {
       throw new Error(`Unable to load ${configUrl}`);
     }
 
-    activeConfig = await response.json();
+    activeConfig = await configRes.json();
+    const officeHours = officeHoursRes?.ok ? await officeHoursRes.json() : {};
+
     applyBranding(activeConfig);
+    renderOfficeHours(officeHours);
     applyWatchTheme(activeConfig.timezone || "America/Denver");
     startClock(activeConfig.timezone || "America/Denver");
     renderQuote(activeConfig.quotes);
@@ -84,6 +91,20 @@ function applyBranding(config) {
   document.title = config.pageTitle || "Digital Signage";
   logo.src = config.logoImage;
   displayName.textContent = config.displayName || "Your Name";
+}
+
+function renderOfficeHours(officeHours = {}) {
+  const list = document.getElementById("office-hours-list");
+  const locationEl = document.getElementById("office-hours-location");
+  const schedule = Array.isArray(officeHours.schedule) ? officeHours.schedule : [];
+
+  list.innerHTML = schedule.map(({ day, time }) => `
+    <li class="office-hours-card__row">
+      <span class="office-hours-card__day">${day}</span>
+      <span class="office-hours-card__time">${time}</span>
+    </li>`).join("");
+
+  locationEl.textContent = officeHours.location || "";
 }
 
 function renderQuote(quotesConfig = {}) {
