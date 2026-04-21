@@ -12,7 +12,7 @@ The analog clock cycles through 6 CSS-only watch dial archetypes, one per day. E
 |---|---|---|
 | `watch--sector` | Sector / two-tone | Cream inner field + dark outer ring, hairline crosshair, blued steel hands, brass ticks |
 | `watch--diver` | Submariner diver | All-black dial, glowing lume pips, inverted-triangle at 12, bezel ring, lume-stripe hands |
-| `watch--flieger` | B-Uhr pilot | Matte black, all 12 large Arabic numerals, white triangle at 12, sword hands with lume stripe |
+| `watch--flieger` | B-Uhr pilot | Matte black, all 12 large Arabic numerals, white triangle at 12, spearhead hands (matte grey-silver, no lume) |
 | `watch--dress` | Dress watch | Silver/champagne dial, italic Playfair Display Roman numerals via `::before`, dauphine hands |
 | `watch--field` | Field / military | Warm khaki/olive dial (distinctly lighter than flieger), cardinals only, broad arrow hands |
 | `watch--chrono` | Panda chronograph | Cream center + dark tachymeter ring, three subdials at 3/6/9 built entirely in CSS gradients |
@@ -35,6 +35,17 @@ The analog clock cycles through 6 CSS-only watch dial archetypes, one per day. E
 ```
 
 All children use `position: absolute; inset: 0` unless noted. Hands use `top: 50%; left: 50%; transform-origin: bottom center; transform: translate(-50%, -100%) rotate(var(--hand-angle, 0deg))`.
+
+**Z-index stacking order (do not change these):**
+
+| Layer | z-index |
+|---|---|
+| `::before` inner bezel ring | 6 |
+| `.analog-clock__hand` (all hands) | 8 |
+| `.analog-clock__center` center jewel | 10 |
+| `.analog-clock__face` crystal dome | 20 |
+
+Hands must be z-index 8 (above the ring at 6) or the chapter ring will occlude the hands near the dial edge.
 
 ---
 
@@ -86,11 +97,16 @@ Rendered entirely in `background` as layered `radial-gradient` entries — no ex
 
 Order matters: later layers render under earlier ones in a CSS `background` stack.
 
+### Spearhead hands (flieger)
+`clip-path: polygon(50% 0%, 84% 20%, 62% 100%, 38% 100%, 16% 20%)` (hour) and `polygon(50% 0%, 80% 14%, 62% 100%, 38% 100%, 20% 14%)` (minute). Matte grey-silver, no lume stripe. The pentagonal spearhead shape distinguishes flieger from diver's lume-stripe swords.
+
 ### Broad arrow hands (field)
-Use `clip-path: polygon(33% 0%, 67% 0%, 56% 82%, 50% 100%, 44% 82%)` on the hand element for the arrowhead cutout. Works on both hour and minute hands.
+`clip-path: polygon(50% 0%, 78% 30%, 65% 30%, 65% 100%, 35% 100%, 35% 30%, 22% 30%)` (hour) and `polygon(50% 0%, 80% 26%, 70% 26%, 70% 100%, 30% 100%, 30% 26%, 20% 26%)` (minute). The arrowhead points **outward** (tip at `50% 0%`), not toward the center.
+
+**Clip-path orientation rule:** In `.analog-clock__hand`, `0%` = the outermost tip (away from dial center), `100%` = the pivot end (toward center). All pointed shapes must place their tip at `50% 0%`. If the arrow points inward, the polygon is inverted.
 
 ### Dauphine hands (dress)
-`clip-path: polygon(28% 0%, 72% 0%, 60% 100%, 40% 100%)` gives the tapered diamond profile.
+`clip-path: polygon(50% 0%, 82% 28%, 65% 100%, 35% 100%, 18% 28%)` (hour) and `polygon(50% 0%, 78% 22%, 63% 100%, 37% 100%, 22% 22%)` (minute). The diamond tip must be at `50% 0%` (outward). The same clip-path orientation rule applies.
 
 ---
 
@@ -99,7 +115,7 @@ Use `clip-path: polygon(33% 0%, 67% 0%, 56% 82%, 50% 100%, 44% 82%)` on the hand
 These distinctions prevent themes from looking similar:
 
 - **Flieger vs Field**: flieger is near-black `#1c1c1c`; field is warm khaki `#7a7050`. Flieger has all 12 numerals; field has only 12/3/6/9. Flieger has a triangle at 12; field has a thick baton.
-- **Diver vs Flieger**: diver has a bezel ring, lume pips (no numerals), green glow; flieger has white Arabic numerals, no glow, clean sword hands.
+- **Diver vs Flieger**: diver has a bezel ring, lume pips (no numerals), green glow, and lume-stripe sword hands; flieger has white Arabic numerals, no glow, and matte grey spearhead hands.
 - **Sector vs Dress**: sector is two-tone (cream + dark outer ring); dress is all-silver with no dark ring. Sector has Arabic numerals; dress has Roman.
 - **Chrono vs Sector**: chrono has dark outer ring + cream center (inverse of sector) + three visible subdials.
 
@@ -139,3 +155,5 @@ done
 - The `::before` inner bezel ring uses `inset: X%` — this percentage is relative to the clock element's dimensions, so `inset: 17%` means 4.76cqw gap from each edge.
 - Brand text `::after` defaults to cream — override to dark ink on light-dial themes (sector, dress).
 - Tick `::before` `top` values: `0–1%` = outer edge, `3–4%` = recessed minor ticks. The dark outer ring on two-tone dials starts at ~33% of the clock's width from the edge.
+- Chrono Arabic numerals must be hidden: `.watch--chrono .analog-clock__numerals span { font-size: 0 !important; color: transparent !important; }`. Without this, the 12 numeral spans appear over the subdials and tachymeter ring, clashing with the radial-gradient tick dots.
+- Clip-path hands pointing inward: `0%` in `.analog-clock__hand` is the outermost tip; `100%` is the pivot end. If arrow/spearhead/diamond tips end up pointing toward center, the polygon coordinates are inverted — flip by placing the tip at `50% 0%`.

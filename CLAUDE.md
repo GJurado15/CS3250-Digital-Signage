@@ -44,7 +44,22 @@ Read("/tmp/s.png")
 - `--virtual-time-budget=20000` gives 20 seconds of simulated JS execution time. This is necessary because the app fetches OG images for articles that don't have feed images — this takes real network time. 8000ms is too short now; use 20000.
 - The server must be running before screenshotting. Check with curl first.
 - Animations are frozen at the virtual time snapshot — don't design around them.
-- After CSS/JS changes, the screenshot reflects them immediately (no cache issue in headless). The *browser* caches aggressively — tell the user to use Ctrl+Shift+R or clear cache in DevTools.
+- After CSS/JS changes, the screenshot reflects them immediately (no cache issue in headless). The *browser* caches aggressively — tell the user to use Ctrl+Shift+R or disable cache in DevTools.
+
+### Canonical Screenshots
+
+After any polishing loop, regenerate all 6 `signage-<theme>.png` files in the project root so the user can open them immediately to review results:
+
+```bash
+for theme in sector diver flieger dress field chrono; do
+  chromium-browser --headless \
+    --screenshot="signage-${theme}.png" \
+    --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
+    "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
+done
+```
+
+These are the committed reference images — open any `signage-*.png` directly in your file browser to see the final result for each theme. Always regenerate them at the end of a polish session before reporting work complete.
 
 ---
 
@@ -260,7 +275,8 @@ Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference scr
 - Per-feed top-3 candidate pool for lead scoring (not just top-1)
 - Watch lume glows: `box-shadow` + `filter: drop-shadow()` stack for true luminous effect
 - Chrono subdials entirely in CSS `background` gradients — zero extra DOM elements
-- `clip-path: polygon(...)` on hand elements for broad-arrow and dauphine shapes
+- `clip-path: polygon(...)` on hand elements for broad-arrow, dauphine, and spearhead shapes
+- Z-index stacking in the clock: `::before` ring = 6, hands = 8, center jewel = 10, crystal face = 20 — hands must sit above the chapter ring
 
 ## Things That Don't Work / Pitfalls
 
@@ -274,3 +290,5 @@ Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference scr
 - Lume `box-shadow` glow on watch pips is clipped by the parent circle — always pair with `filter: drop-shadow()`
 - Chrono subdial gradient stops are % of farthest-corner distance, not element width — small % values produce tiny subdials
 - Brand text `::after` defaults to cream — light-dial themes (sector, dress) must override to dark ink
+- Clip-path hand direction: in `.analog-clock__hand`, `0%` = outermost tip, `100%` = pivot end. All pointed shapes must place the tip at `50% 0%` — if the arrow points inward, the polygon is inverted
+- Chrono numerals must be hidden (`font-size: 0 !important`) — leaving them visible causes the numeral spans to appear over the tachymeter ring and subdial tick dots

@@ -140,7 +140,7 @@ The analog clock cycles through 6 vintage watch dial archetypes — one per day,
 |---|---|---|
 | Sector | 1930s two-tone | Cream inner field + dark outer ring, hairline crosshair, cobalt blued-steel hands |
 | Diver | Submariner | All-black dial, multi-layer glowing lume pips, inverted triangle at 12, lume-stripe hands |
-| Flieger | B-Uhr pilot | Matte black, all 12 large Arabic numerals, white triangle at 12, sword hands with lume stripe |
+| Flieger | B-Uhr pilot | Matte black, all 12 large Arabic numerals, white triangle at 12, spearhead hands (matte grey-silver, no lume) |
 | Dress | Dress watch | Silver/champagne dial, Playfair Display italic Roman numerals, dauphine hands |
 | Field | Military/field | Warm khaki/olive dial, cardinals only (12/3/6/9), broad arrow hands |
 | Chrono | Panda chronograph | Cream center + dark tachymeter ring, three CSS-only subdials at 3/6/9 |

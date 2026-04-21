@@ -171,3 +171,24 @@ AI-assisted work in this session includes:
 - Iterated on horizontal spacing: landed on `justify-self: center` for both panels, placing each panel's center equidistant from the clock center and its screen edge
 - Restructured weather card from a flex stack to absolute positioning within the circle: icon anchored at the top, label hidden, temp+desc group at `translate(-50%, -50%)` from the geometric center so the temperature number is the true visual anchor
 - Refreshed all 6 canonical `signage-<theme>.png` screenshots after each layout change
+
+---
+
+## Session — April 21, 2026 (watch dial polish + bug fixes)
+
+AI-assisted work in this session includes:
+- Ran 5 screenshot-loop polish passes across all 6 watch dial archetypes, using Apple HIG, Braun/Dieter Rams, Rolex/Omega, and Swiss typography as UX inspiration
+- **Sector**: Upgraded `::before` to a double-ring brass chapter ring; richer guilloché sunburst; deeper cobalt blued-steel hands
+- **Diver**: Stepped ceramic bezel ring; more intense multi-layer lume glows on all pips; lume-stripe hands centered (gradient peak at exactly `50%`)
+- **Flieger**: Larger bolder Arabic numerals (2.5cqw, weight 900); replaced sword hands with distinct pentagonal spearhead hands (matte grey-silver, no lume) to differentiate from diver
+- **Dress**: Silk sunray shimmer highlight on dial; Roman numerals enlarged (2.0cqw, weight 700); dauphine hands corrected to point outward
+- **Field**: Broad arrow hands corrected to point outward (tip at `50% 0%` in clip-path); warmer khaki dial palette
+- **Chrono**: Reverted overlarge subdials (18% → 13% farthest-corner radius); hid all 12 Arabic numerals to eliminate visual noise over tachymeter ring and subdial tick dots
+- Fixed z-index stacking bug: `::before` chapter ring was z-index 6, hands were z-index 5 — hands were occluded near dial edges; fixed by raising hands to z-index 8
+- Fixed clip-path orientation on field and dress hands: polygons had the arrowhead/diamond tip at `100%` (pivot end) instead of `0%` (outermost tip); corrected by building all pointed shapes with tip at `50% 0%`
+- Fixed diver lume stripe off-center: lume `linear-gradient` on hour/minute hands previously peaked at 40%; corrected to peak symmetrically at `50%`
+- Confirmed lead story grid row uses `2.2fr` (not `repeat(4, 1fr)`) so the lead card gets 2.2× the height of secondary items
+- Regenerated all 6 canonical `signage-<theme>.png` screenshots at end of session
+- Updated `watchcreation.md`: flieger archetype description, spearhead hand technique, corrected broad-arrow and dauphine clip-path examples, z-index stacking table, clip-path orientation rule, chrono numerals pitfall
+- Updated `README.md`: flieger watch themes table row
+- Updated `CLAUDE.md`: z-index stacking and clip-path orientation in "Things That Work Well / Pitfalls"
