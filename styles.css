@@ -395,8 +395,8 @@ body {
       from 0deg,
       transparent 0deg,
       transparent 4deg,
-      rgba(0,0,0,0.016) 4deg,
-      rgba(0,0,0,0.016) 5deg
+      rgba(0,0,0,0.024) 4deg,
+      rgba(0,0,0,0.024) 5deg
     ),
     radial-gradient(circle,
       #faf2e0 0%,
@@ -407,14 +407,15 @@ body {
       #181510 100%);
   box-shadow:
     /* Brass bezel */
-    0 0 0 0.28cqw rgba(200,168,72,0.7),
+    0 0 0 0.28cqw rgba(200,168,72,0.85),
     0 0 0 0.55cqw #0c0a08,
-    0 0 0 0.85cqw rgba(200,168,72,0.22),
+    0 0 0 0.85cqw rgba(200,168,72,0.30),
+    0 0 0 1.3cqw rgba(200,168,72,0.08),
     /* Depth */
     0 2cqw 8cqw rgba(0,0,0,0.7),
     /* Crystal convex highlight */
     inset 0 -0.3cqw 1.2cqw rgba(0,0,0,0.2),
-    inset 0 0.6cqw 1.5cqw rgba(255,255,255,0.12);
+    inset 0 0.8cqw 2cqw rgba(255,255,255,0.16);
 }
 
 /* Brand name — top of dial, just below 12 o'clock */
@@ -950,23 +951,23 @@ body {
   background:
     /* Vertical crosshair — razor hairline */
     linear-gradient(to right,
-      transparent calc(50% - 0.09cqw),
-      rgba(26,22,8,0.22) calc(50% - 0.09cqw),
-      rgba(26,22,8,0.22) calc(50% + 0.09cqw),
-      transparent calc(50% + 0.09cqw)),
+      transparent calc(50% - 0.11cqw),
+      rgba(26,22,8,0.42) calc(50% - 0.11cqw),
+      rgba(26,22,8,0.42) calc(50% + 0.11cqw),
+      transparent calc(50% + 0.11cqw)),
     /* Horizontal crosshair */
     linear-gradient(to bottom,
-      transparent calc(50% - 0.09cqw),
-      rgba(26,22,8,0.22) calc(50% - 0.09cqw),
-      rgba(26,22,8,0.22) calc(50% + 0.09cqw),
-      transparent calc(50% + 0.09cqw)),
+      transparent calc(50% - 0.11cqw),
+      rgba(26,22,8,0.42) calc(50% - 0.11cqw),
+      rgba(26,22,8,0.42) calc(50% + 0.11cqw),
+      transparent calc(50% + 0.11cqw)),
     /* Sunburst engine-turned guilloché */
     repeating-conic-gradient(
       from 0deg,
       transparent 0deg,
       transparent 3.5deg,
-      rgba(0,0,0,0.022) 3.5deg,
-      rgba(0,0,0,0.022) 4.5deg
+      rgba(0,0,0,0.032) 3.5deg,
+      rgba(0,0,0,0.032) 4.5deg
     ),
     radial-gradient(circle,
       #fbf4e4 0%,
@@ -976,6 +977,14 @@ body {
       #2e2a1a 66.5%,
       #221e12 80%,
       #161310 100%);
+  box-shadow:
+    0 0 0 0.28cqw rgba(200,168,72,0.85),
+    0 0 0 0.55cqw #0c0a08,
+    0 0 0 0.85cqw rgba(200,168,72,0.30),
+    0 0 0 1.3cqw rgba(200,168,72,0.08),
+    0 2cqw 8cqw rgba(0,0,0,0.7),
+    inset 0 -0.3cqw 1.2cqw rgba(0,0,0,0.2),
+    inset 0 0.8cqw 2cqw rgba(255,255,255,0.16);
 }
 
 /* ── DIVER ──────────────────────────────────────────────────────────
@@ -1068,11 +1077,13 @@ body {
   width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, #f0fff0 20%, #a8e8a8 55%, rgba(120,210,120,0.85) 85%, rgba(80,180,80,0.4) 100%);
+  background: radial-gradient(circle, #f8fff8 15%, #b8f0b8 50%, rgba(130,220,130,0.9) 80%, rgba(80,180,80,0.5) 100%);
   box-shadow:
-    0 0 0.5cqw rgba(160,255,160,0.9),
-    0 0 1.2cqw rgba(120,255,120,0.6),
-    0 0 2cqw rgba(80,200,80,0.35);
+    0 0 0.5cqw rgba(160,255,160,1),
+    0 0 1.5cqw rgba(120,255,120,0.8),
+    0 0 3cqw rgba(80,220,80,0.5),
+    0 0 5cqw rgba(60,200,60,0.2);
+  filter: drop-shadow(0 0 0.4cqw rgba(140,255,140,0.9));
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -1085,10 +1096,12 @@ body {
   border-radius: 2px;
   width: 38%;
   height: 175%;
-  background: linear-gradient(180deg, #f0fff0 0%, #a8e8a8 40%, rgba(120,210,120,0.9) 100%);
+  background: linear-gradient(180deg, #f8fff8 0%, #b8f0b8 35%, rgba(130,220,130,0.95) 100%);
   box-shadow:
-    0 0 0.5cqw rgba(160,255,160,0.85),
-    0 0 1.2cqw rgba(120,255,120,0.5);
+    0 0 0.6cqw rgba(160,255,160,0.95),
+    0 0 1.5cqw rgba(120,255,120,0.65),
+    0 0 3cqw rgba(80,220,80,0.35);
+  filter: drop-shadow(0 0 0.5cqw rgba(140,255,140,0.85));
   border: none;
 }
 
@@ -1099,11 +1112,12 @@ body {
   border-radius: 0;
   clip-path: polygon(5% 0%, 95% 0%, 50% 100%);
   border: none;
-  background: linear-gradient(180deg, #f0fff0 0%, #a8e8a8 40%, rgba(120,210,120,0.95) 100%);
+  background: linear-gradient(180deg, #f8fff8 0%, #b8f0b8 35%, rgba(130,225,130,0.98) 100%);
   box-shadow: none;
   filter:
-    drop-shadow(0 0 0.5cqw rgba(160,255,160,0.95))
-    drop-shadow(0 0 1.2cqw rgba(100,220,100,0.6));
+    drop-shadow(0 0 0.6cqw rgba(160,255,160,1))
+    drop-shadow(0 0 1.8cqw rgba(100,230,100,0.8))
+    drop-shadow(0 0 3.5cqw rgba(60,200,60,0.4));
 }
 
 /* Bezel numbers at 10-min intervals — counter-rotated to stay upright */
@@ -1116,10 +1130,11 @@ body {
   top: 5.5%;
   left: 50%;
   font-size: 1cqw;
-  font-weight: 800;
-  color: rgba(220,220,220,0.85);
+  font-weight: 900;
+  color: rgba(255,255,255,0.95);
   font-family: "Inter", sans-serif;
   letter-spacing: -0.02em;
+  text-shadow: 0 0 0.5cqw rgba(255,255,255,0.4);
 }
 
 .watch--diver .analog-clock__ticks span:nth-child(11)::after {
@@ -1252,11 +1267,12 @@ body {
 
 /* Triangle at 12 — the defining flieger marker */
 .watch--flieger .analog-clock__ticks span:nth-child(1)::before {
-  background: rgba(255,255,255,1);
+  background: linear-gradient(180deg, #ffffff 0%, #e8e8e0 100%);
   width: 3.5%;
   height: 7%;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   box-shadow: none;
+  filter: drop-shadow(0 0 0.3cqw rgba(255,255,255,0.6));
 }
 
 /* Sword hands with lume center stripe — classic B-Uhr */
@@ -1264,32 +1280,40 @@ body {
   width: 5%;
   height: 25%;
   background: linear-gradient(90deg,
-    #a0a098 0%, #d8d8d0 22%,
+    #787870 0%, #c8c8c0 15%,
+    #e8e8e2 28%,
     /* lume inset stripe */
-    #e8ffe8 25%, #c0e0c0 38%, #e8ffe8 45%,
-    #d8d8d0 48%, #b0b0a8 70%, #888880 100%);
+    #eaffe8 30%, #b8e8b0 42%, #eaffe8 50%,
+    #e0e0d8 53%, #b8b8b0 72%, #787870 100%);
   border-radius: 1% 1% 0 0;
-  box-shadow: 0.12cqw 0.12cqw 0.5cqw rgba(0,0,0,0.85);
+  box-shadow:
+    0.15cqw 0.15cqw 0.6cqw rgba(0,0,0,0.9),
+    inset 0 0.1cqw 0.2cqw rgba(255,255,255,0.15);
 }
 
 .watch--flieger .analog-clock__hand--minute {
   width: 3.5%;
   height: 42%;
   background: linear-gradient(90deg,
-    #a0a098 0%, #d8d8d0 22%,
+    #787870 0%, #c8c8c0 15%,
+    #e8e8e2 28%,
     /* lume inset stripe */
-    #e8ffe8 25%, #c0e0c0 38%, #e8ffe8 45%,
-    #d8d8d0 48%, #b0b0a8 70%, #888880 100%);
+    #eaffe8 30%, #b8e8b0 42%, #eaffe8 50%,
+    #e0e0d8 53%, #b8b8b0 72%, #787870 100%);
   border-radius: 0.5% 0.5% 0 0;
-  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.85);
+  box-shadow:
+    0.12cqw 0.12cqw 0.55cqw rgba(0,0,0,0.9),
+    inset 0 0.1cqw 0.2cqw rgba(255,255,255,0.12);
 }
 
 /* Red seconds with lollipop counterweight */
 .watch--flieger .analog-clock__hand--second {
   width: 0.65%;
   height: 46%;
-  background: linear-gradient(180deg, #e83030 0%, #cc2020 70%, rgba(204,32,32,0.2) 100%);
-  box-shadow: 0 0 0.3cqw rgba(220,40,40,0.5);
+  background: linear-gradient(180deg, #ff3030 0%, #e02020 65%, rgba(224,32,32,0.25) 100%);
+  box-shadow:
+    0 0 0.3cqw rgba(255,40,40,0.7),
+    0 0 0.8cqw rgba(220,20,20,0.35);
 }
 
 .watch--flieger .analog-clock__center {
@@ -1371,24 +1395,24 @@ body {
 
 /* Dress: fine minute dots, clean applied indices at hours */
 .watch--dress .analog-clock__ticks span::before {
-  background: rgba(110,100,84,0.35);
-  width: 0.45%;
-  height: 2.5%;
+  background: rgba(90,80,65,0.60);
+  width: 0.5%;
+  height: 2.8%;
   border-radius: 50%;
 }
 
 .watch--dress .analog-clock__ticks span:nth-child(5n + 1)::before {
-  background: rgba(65,58,46,0.82);
-  width: 0.65%;
-  height: 6.5%;
+  background: rgba(58,50,38,0.90);
+  width: 0.7%;
+  height: 7%;
   border-radius: 0.5px;
   top: 0.5%;
 }
 
 .watch--dress .analog-clock__ticks span:nth-child(1)::before {
-  background: rgba(55,48,36,0.92);
-  width: 0.85%;
-  height: 8%;
+  background: rgba(45,38,28,0.96);
+  width: 0.9%;
+  height: 8.5%;
   border-radius: 0.5px;
   top: 0.2%;
   box-shadow: none;
@@ -1397,26 +1421,38 @@ body {
 .watch--dress .analog-clock__hand--hour {
   width: 2.8%;
   height: 24%;
-  background: linear-gradient(90deg, #28261e 0%, #52503e 35%, #6a6858 50%, #52503e 65%, #28261e 100%);
+  background: linear-gradient(90deg,
+    #1e1c14 0%, #484638 25%,
+    #8a8878 42%, #a8a698 50%,
+    #8a8878 58%, #484638 75%, #1e1c14 100%);
   clip-path: polygon(28% 0%, 72% 0%, 60% 100%, 40% 100%);
   border-radius: 0;
-  box-shadow: 0 0.1cqw 0.4cqw rgba(0,0,0,0.5);
+  box-shadow:
+    0 0.12cqw 0.5cqw rgba(0,0,0,0.55),
+    0 0 0.2cqw rgba(0,0,0,0.2);
 }
 
 .watch--dress .analog-clock__hand--minute {
   width: 2%;
   height: 38%;
-  background: linear-gradient(90deg, #28261e 0%, #52503e 35%, #6a6858 50%, #52503e 65%, #28261e 100%);
+  background: linear-gradient(90deg,
+    #1e1c14 0%, #484638 25%,
+    #8a8878 42%, #a8a698 50%,
+    #8a8878 58%, #484638 75%, #1e1c14 100%);
   clip-path: polygon(22% 0%, 78% 0%, 60% 100%, 40% 100%);
   border-radius: 0;
-  box-shadow: 0 0.1cqw 0.4cqw rgba(0,0,0,0.45);
+  box-shadow:
+    0 0.1cqw 0.45cqw rgba(0,0,0,0.5),
+    0 0 0.18cqw rgba(0,0,0,0.18);
 }
 
 .watch--dress .analog-clock__hand--second {
   width: 0.45%;
   height: 47%;
-  background: linear-gradient(180deg, #8a1020 0%, #a81828 75%, rgba(168,24,40,0.25) 100%);
-  box-shadow: 0 0.05cqw 0.35cqw rgba(160,20,40,0.5);
+  background: linear-gradient(180deg, #c01828 0%, #a01020 70%, rgba(160,16,32,0.3) 100%);
+  box-shadow:
+    0 0.06cqw 0.4cqw rgba(180,20,40,0.6),
+    0 0 0.6cqw rgba(160,20,40,0.3);
 }
 
 .watch--dress .analog-clock__center {
@@ -1525,30 +1561,32 @@ body {
 
 /* Railroad minute track — prominent, squared-off ticks */
 .watch--field .analog-clock__ticks span::before {
-  background: rgba(240,228,180,0.5);
+  background: rgba(248,238,185,0.80);
   width: 1.1%;
   height: 3.2%;
   top: 2.2%;
   border-radius: 0;
+  box-shadow: 0 0 0.15cqw rgba(255,245,190,0.4);
 }
 
 /* Hour markers — thick batons */
 .watch--field .analog-clock__ticks span:nth-child(5n + 1)::before {
-  background: rgba(244,234,185,0.92);
+  background: rgba(252,242,195,0.98);
   width: 1.8%;
   height: 6.5%;
   top: 1%;
   border-radius: 0;
+  box-shadow: 0 0 0.2cqw rgba(255,245,195,0.5);
 }
 
 /* 12 o'clock — double-wide baton */
 .watch--field .analog-clock__ticks span:nth-child(1)::before {
-  background: rgba(248,240,192,0.98);
+  background: #fffff0;
   width: 2.4%;
   height: 8%;
   top: 0.3%;
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: 0 0 0.3cqw rgba(255,255,220,0.6);
 }
 
 /* Only show cardinals (12, 3, 6, 9) — hide others */
@@ -1571,19 +1609,29 @@ body {
 .watch--field .analog-clock__hand--hour {
   width: 5.5%;
   height: 25%;
-  background: linear-gradient(90deg, #b8b090 0%, #e0d8b0 30%, #f0e8c0 50%, #e0d8b0 70%, #b8b090 100%);
+  background: linear-gradient(90deg,
+    #888068 0%, #c8c0a0 22%,
+    #ece4c0 38%, #f8f0d0 50%,
+    #ece4c0 62%, #c8c0a0 78%, #888068 100%);
   clip-path: polygon(33% 0%, 67% 0%, 56% 82%, 50% 100%, 44% 82%);
   border-radius: 0;
-  box-shadow: 0.12cqw 0.12cqw 0.5cqw rgba(0,0,0,0.7);
+  box-shadow:
+    0.15cqw 0.15cqw 0.6cqw rgba(0,0,0,0.75),
+    inset 0 0.08cqw 0.2cqw rgba(255,248,210,0.3);
 }
 
 .watch--field .analog-clock__hand--minute {
   width: 4%;
   height: 40%;
-  background: linear-gradient(90deg, #b8b090 0%, #e0d8b0 30%, #f0e8c0 50%, #e0d8b0 70%, #b8b090 100%);
+  background: linear-gradient(90deg,
+    #888068 0%, #c8c0a0 22%,
+    #ece4c0 38%, #f8f0d0 50%,
+    #ece4c0 62%, #c8c0a0 78%, #888068 100%);
   clip-path: polygon(28% 0%, 72% 0%, 56% 82%, 50% 100%, 44% 82%);
   border-radius: 0;
-  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.65);
+  box-shadow:
+    0.12cqw 0.12cqw 0.55cqw rgba(0,0,0,0.7),
+    inset 0 0.08cqw 0.2cqw rgba(255,248,210,0.25);
 }
 
 .watch--field .analog-clock__hand--second {
@@ -1644,56 +1692,56 @@ body {
     radial-gradient(circle at 50% 70%, transparent 13.2%, rgba(20,18,18,0.55) 13.3%, rgba(20,18,18,0.55) 14%, transparent 14.1%),
     /* ── Subdial at 9 o'clock ── */
     radial-gradient(circle at 30% 50%,
-      #e8e2cc 0%, #ddd8c0 11%, #d4cdb8 12.5%, #c0baa8 13%,
-      rgba(10,9,9,0.5) 13.5%, transparent 14%),
+      #f0ecd8 0%, #e4dfc8 10%, #d8d2be 12%, #b8b2a2 13%,
+      rgba(8,6,6,0.65) 13.5%, transparent 14%),
     /* tick dots around 9-subdial perimeter */
-    radial-gradient(circle at 30% 37.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 30% 62.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 21.5% 50%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 38.5% 50%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 23% 42%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 23% 58%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 37% 42%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 37% 58%, #706858 0%, #706858 0.65%, transparent 0.75%),
+    radial-gradient(circle at 30% 37.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 30% 62.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 21.5% 50%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 38.5% 50%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 23% 42%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 23% 58%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 37% 42%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 37% 58%, #504838 0%, #504838 0.65%, transparent 0.75%),
     /* ── Subdial at 3 o'clock ── */
     radial-gradient(circle at 70% 50%,
-      #e8e2cc 0%, #ddd8c0 11%, #d4cdb8 12.5%, #c0baa8 13%,
-      rgba(10,9,9,0.5) 13.5%, transparent 14%),
-    radial-gradient(circle at 70% 37.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 70% 62.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 61.5% 50%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 78.5% 50%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 63% 42%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 63% 58%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 77% 42%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 77% 58%, #706858 0%, #706858 0.65%, transparent 0.75%),
+      #f0ecd8 0%, #e4dfc8 10%, #d8d2be 12%, #b8b2a2 13%,
+      rgba(8,6,6,0.65) 13.5%, transparent 14%),
+    radial-gradient(circle at 70% 37.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 70% 62.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 61.5% 50%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 78.5% 50%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 63% 42%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 63% 58%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 77% 42%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 77% 58%, #504838 0%, #504838 0.65%, transparent 0.75%),
     /* ── Subdial at 6 o'clock ── */
     radial-gradient(circle at 50% 70%,
-      #e8e2cc 0%, #ddd8c0 11%, #d4cdb8 12.5%, #c0baa8 13%,
-      rgba(10,9,9,0.5) 13.5%, transparent 14%),
-    radial-gradient(circle at 50% 57.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 50% 82.5%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 41.5% 70%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 58.5% 70%, #706858 0%, #706858 0.9%, transparent 1%),
-    radial-gradient(circle at 43% 62%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 43% 78%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 57% 62%, #706858 0%, #706858 0.65%, transparent 0.75%),
-    radial-gradient(circle at 57% 78%, #706858 0%, #706858 0.65%, transparent 0.75%),
+      #f0ecd8 0%, #e4dfc8 10%, #d8d2be 12%, #b8b2a2 13%,
+      rgba(8,6,6,0.65) 13.5%, transparent 14%),
+    radial-gradient(circle at 50% 57.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 50% 82.5%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 41.5% 70%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 58.5% 70%, #504838 0%, #504838 0.9%, transparent 1%),
+    radial-gradient(circle at 43% 62%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 43% 78%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 57% 62%, #504838 0%, #504838 0.65%, transparent 0.75%),
+    radial-gradient(circle at 57% 78%, #504838 0%, #504838 0.65%, transparent 0.75%),
     /* ── Main panda dial ── */
     repeating-conic-gradient(
       from 0deg,
       transparent 0deg,
       transparent 4.5deg,
-      rgba(0,0,0,0.007) 4.5deg,
-      rgba(0,0,0,0.007) 5.5deg
+      rgba(0,0,0,0.012) 4.5deg,
+      rgba(0,0,0,0.012) 5.5deg
     ),
     radial-gradient(circle,
-      #f4f0e2 0%,
-      #ece8d8 48%,
-      #e4dcc8 58%,
-      #1c1a1a 62%,
-      #141212 78%,
-      #0c0a0a 100%);
+      #f8f4e6 0%,
+      #f0ece0 48%,
+      #e8e0cc 58%,
+      #161414 61%,
+      #0e0c0c 76%,
+      #080606 100%);
   box-shadow:
     0 0 0 0.28cqw rgba(180,175,168,0.7),
     0 0 0 0.55cqw #0a0a0a,
@@ -1721,22 +1769,23 @@ body {
 }
 
 .watch--chrono .analog-clock__ticks span::before {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.75);
   width: 0.65%;
   height: 3.2%;
 }
 
 .watch--chrono .analog-clock__ticks span:nth-child(5n + 1)::before {
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,1);
   width: 1.4%;
   height: 7.5%;
+  box-shadow: 0 0 0.15cqw rgba(255,255,255,0.5);
 }
 
 .watch--chrono .analog-clock__ticks span:nth-child(1)::before {
-  background: rgba(255,255,255,1);
+  background: #ffffff;
   width: 2%;
   height: 9%;
-  box-shadow: 0 0 0.4cqw rgba(255,255,255,0.35);
+  box-shadow: 0 0 0.5cqw rgba(255,255,255,0.7);
 }
 
 /* Polished dark hands on the cream dial */
