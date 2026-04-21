@@ -105,19 +105,42 @@ These distinctions prevent themes from looking similar:
 
 ---
 
-## Screenshot Loop (dev workflow)
+## Screenshot Convention
+
+The canonical screenshots live in the **project root** as `signage-<name>.png` — one file per theme, no other sets. Never commit a second set under a different prefix.
+
+| File | Theme |
+|---|---|
+| `signage-sector.png` | Sector / two-tone |
+| `signage-diver.png` | Submariner diver |
+| `signage-flieger.png` | B-Uhr pilot |
+| `signage-dress.png` | Dress watch |
+| `signage-field.png` | Field / military |
+| `signage-chrono.png` | Panda chronograph |
+
+### Dev workflow — quick single shot (temp file)
 
 ```bash
-# server must be running
-python3 server.py
+python3 server.py   # must be running
 
-# take screenshot
 chromium-browser --headless --screenshot=/tmp/s.png \
   --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
   "http://127.0.0.1:8000/?theme=diver" 2>/dev/null
 
-# read it
+# inspect
 Read("/tmp/s.png")
+```
+
+### Refresh all 6 canonical screenshots
+
+Run this after any CSS change to keep the committed images current:
+
+```bash
+for theme in sector diver flieger dress field chrono; do
+  chromium-browser --headless --screenshot=signage-${theme}.png \
+    --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
+    "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
+done
 ```
 
 `--virtual-time-budget=20000` is required — OG image fetching needs the time. Force any of the 6 theme names with `?theme=<name>`.
