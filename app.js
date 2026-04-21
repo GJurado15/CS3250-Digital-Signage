@@ -5,13 +5,9 @@ import {
 } from "./utils.js";
 
 const configUrl = "config.json";
-const availabilityUrl = "availability.json";
 
 const logo = document.getElementById("logo");
 const displayName = document.getElementById("display-name");
-const availabilityCard = document.getElementById("availability-card");
-const availabilityStatus = document.getElementById("availability-status");
-const availabilityDetail = document.getElementById("availability-detail");
 const timeText = document.getElementById("time-text");
 const dateText = document.getElementById("date-text");
 const hourHand = document.getElementById("hour-hand");
@@ -57,7 +53,6 @@ async function boot() {
     startClock(activeConfig.timezone || "America/Denver");
     renderQuote(activeConfig.quotes);
     await Promise.allSettled([
-      loadAvailability(),
       loadWeather(activeConfig.weather),
       loadRss(activeConfig.rss)
     ]);
@@ -89,37 +84,6 @@ function applyBranding(config) {
   document.title = config.pageTitle || "Digital Signage";
   logo.src = config.logoImage;
   displayName.textContent = config.displayName || "Your Name";
-}
-
-async function loadAvailability() {
-  try {
-    const response = await fetch(availabilityUrl, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Unable to load ${availabilityUrl}`);
-    }
-
-    const availability = await response.json();
-    renderAvailability(availability);
-  } catch (error) {
-    console.warn(error);
-    renderAvailability({ enabled: false });
-  }
-}
-
-function renderAvailability(availability = {}) {
-  if (!availability.enabled) {
-    availabilityCard.hidden = true;
-    return;
-  }
-
-  availabilityCard.hidden = false;
-  availabilityStatus.textContent = availability.status || "Available";
-  availabilityDetail.textContent = availability.detail || "";
-  availabilityDetail.hidden = !availability.detail;
-
-  const isIn = /in\s+office|available/i.test(availability.status || "");
-  availabilityCard.classList.toggle("availability-card--in", isIn);
-  availabilityCard.classList.toggle("availability-card--out", !isIn);
 }
 
 function renderQuote(quotesConfig = {}) {
