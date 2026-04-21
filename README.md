@@ -53,11 +53,34 @@ Tests live in `utils.test.js` and cover the 11 pure utility functions in `utils.
 
 ---
 
+## Office Hours
+
+Edit **`office-hours.json`** at the root of the project — it's the only thing in that file:
+
+```json
+{
+  "location": "CN 204",
+  "schedule": [
+    { "day": "Mon", "time": "10:00–11:00 AM" },
+    { "day": "Wed", "time": "10:00–11:00 AM" },
+    { "day": "Fri", "time":  "2:00–3:00 PM"  }
+  ]
+}
+```
+
+- Add, remove, or reorder rows in `schedule` to match the current semester.
+- Change `location` for the room number.
+- Days and times are plain strings — write them however you like (`"Tue/Thu"`, `"By appointment"`, etc.).
+
+---
+
 ## Configuration
 
 ### `config.json`
 
-Controls display name, logo, quotes, weather location, and RSS feeds. The RSS section is the most commonly changed part:
+Controls display name, logo, quotes, weather location, and RSS feeds. Edit this file — never touch `index.html` — for day-to-day updates.
+
+#### RSS Feeds
 
 ```json
 "rss": {
@@ -136,4 +159,4 @@ Uses [Open-Meteo](https://open-meteo.com/) — free, no API key. Location is set
 
 ---
 
-See `AI_INSTRUCTIONS.md` for full technical and design documentation (intended for AI assistants continuing work on this project).
+See `CLAUDE.md` for full technical and design documentation (intended for AI assistants continuing work on this project).

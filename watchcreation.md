@@ -107,7 +107,7 @@ These distinctions prevent themes from looking similar:
 
 ## Screenshot Convention
 
-The canonical screenshots live in the **project root** as `signage-<name>.png` — one file per theme, no other sets. Never commit a second set under a different prefix.
+Canonical screenshots live in the **project root** as `signage-<name>.png` — one file per theme, no other sets. Never commit a second set under a different prefix.
 
 | File | Theme |
 |---|---|
@@ -118,22 +118,9 @@ The canonical screenshots live in the **project root** as `signage-<name>.png` �
 | `signage-field.png` | Field / military |
 | `signage-chrono.png` | Panda chronograph |
 
-### Dev workflow — quick single shot (temp file)
+**For the screenshot command, server setup, and all caveats — see the Screenshot Loop section in `CLAUDE.md`.**
 
-```bash
-python3 server.py   # must be running
-
-chromium-browser --headless --screenshot=/tmp/s.png \
-  --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
-  "http://127.0.0.1:8000/?theme=diver" 2>/dev/null
-
-# inspect
-Read("/tmp/s.png")
-```
-
-### Refresh all 6 canonical screenshots
-
-Run this after any CSS change to keep the committed images current:
+To refresh all 6 canonical screenshots after a CSS change:
 
 ```bash
 for theme in sector diver flieger dress field chrono; do
@@ -142,8 +129,6 @@ for theme in sector diver flieger dress field chrono; do
     "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
 done
 ```
-
-`--virtual-time-budget=20000` is required — OG image fetching needs the time. Force any of the 6 theme names with `?theme=<name>`.
 
 ---
 

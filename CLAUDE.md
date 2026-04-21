@@ -1,4 +1,4 @@
-# AI_INSTRUCTIONS.md — AI Agent Guide
+# CLAUDE.md — AI Agent Guide
 
 This document is written for an AI assistant picking up this project cold. It contains everything needed to understand, run, and improve the display without re-deriving context from the code.
 
@@ -52,11 +52,12 @@ Read("/tmp/s.png")
 
 | File | Role |
 |------|------|
-| `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. |
+| `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. Office hours list and location are empty stubs — populated by `renderOfficeHours()` in `app.js`. |
 | `styles.css` | All visual design. This is where most work happens. |
 | `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes. Imports from `utils.js`. |
 | `utils.js` | Pure utility functions (no DOM, no network). Imported by `app.js` and tested by Jest. |
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
+| `office-hours.json` | **Office hours only** — location and weekly schedule. Fetched independently at boot. Edit this for semester changes. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
 
 ## Tooling
@@ -236,49 +237,15 @@ Open-Meteo API — free, no API key. Coordinates set in `config.json`. Refreshes
 
 ## Watch Theme System
 
-6 CSS dial archetypes rotate daily. The active theme is set in `applyWatchTheme()` in `app.js` using `getQuoteDayIndex()` — same stable daily-index logic used for quote rotation.
+6 CSS dial archetypes rotate daily, selected by `applyWatchTheme()` in `app.js` using `getQuoteDayIndex()`. Use `?theme=<name>` to force any theme during development.
 
 ```js
 const watchThemes = ["watch--sector","watch--diver","watch--flieger","watch--dress","watch--field","watch--chrono"];
-// theme = watchThemes[dayIndex % watchThemes.length]
 ```
 
-A `?theme=<name>` query parameter forces a specific theme for development/preview.
+Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference screenshots live in the project root as `signage-<name>.png`.
 
-### Themes
-
-| Class | Archetype | Key traits |
-|---|---|---|
-| `watch--sector` | Sector dial | Cream/brass two-tone, hairline crosshair, cobalt blued-steel hands, brass center jewel |
-| `watch--diver` | Submariner diver | Black dial, multi-layer glowing lume pips, inverted-triangle at 12, lume-stripe hands |
-| `watch--flieger` | B-Uhr pilot | Matte black, all 12 large white Arabic numerals, triangle at 12, sword hands with lume stripe |
-| `watch--dress` | Dress watch | Silver/champagne dial, Playfair Display italic Roman numerals (I–XII), dauphine hands |
-| `watch--field` | Field/military | Warm khaki/olive dial (distinctly lighter than flieger), cardinals-only, broad arrow hands |
-| `watch--chrono` | Panda chronograph | Cream center + dark tachymeter ring, 3 CSS-only subdials with tick rings and hand lines |
-
-**Critical distinction — flieger vs field:** flieger is near-black (`#1c1c1c`), field is warm khaki (`#7a7050`). They must never look the same.
-
-### How themes work
-
-Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Overrides cover:
-- `background` — dial colors/gradients, bezel, subdials
-- `box-shadow` — bezel ring treatment
-- `::before` — inner bezel ring / boundary
-- `::after` — "AUDEMARS BEATY" brand text (top of dial, below 12)
-- `.analog-clock__ticks span::before` — tick mark color/size/shape
-- `.analog-clock__hand--*` — hand colors and shapes
-- `.analog-clock__center` — center cap color
-- `.analog-clock__numerals span` — numeral color/font, or pip markers via `::before`
-
-**Roman numerals (dress):** Arabic numeral spans have `font-size: 0; color: transparent` and the Roman numeral is set via `::before { content: "XII" }` using `nth-child` selectors (1–12 in DOM order).
-
-**Diver pips:** Numeral spans have `font-size: 0` and display a luminous dot via `::before` — round for standard hours, elongated baton for 3/6/9, inverted triangle for 12. Glow requires both `box-shadow` AND `filter: drop-shadow()` — `box-shadow` alone is clipped by the parent circle.
-
-**Chrono subdials:** Three recessed circles rendered entirely as layered `radial-gradient` entries in `background`. Gradient stop percentages are relative to the farthest-corner distance from the gradient center, not the element width — `13%` stop ≈ 3.1cqw subdial radius at 28cqw clock size. Each subdial also needs border ring, 8 tick dots, hand line, and pivot pin as separate gradient layers. See `watchcreation.md` for the full pattern.
-
-### Brand name
-
-All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's surname) via `.analog-clock::after`, positioned at `top: 28%` — correct watchmaking position just below the 12 o'clock marker. Light-dial themes (sector, dress) override the color to a dark ink tone so it reads against the cream background.
+**For DOM structure, CSS techniques, visual differentiation rules, and known pitfalls — see `watchcreation.md`.**
 
 ---
 
