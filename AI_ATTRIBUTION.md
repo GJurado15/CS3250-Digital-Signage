@@ -155,3 +155,19 @@ AI-assisted work in this session includes:
 - Global center jewel (sector default) enlarged to 7.5% with richer 4-stop brass gradient and stronger shadow stack
 - Created `watchcreation.md` — a technical reference covering DOM structure, CSS techniques (lume pips, Roman numerals, subdials, clip-path hands), visual differentiation rules, and known pitfalls
 - Saved polished reference screenshots as `watch-polish-<theme>.png` for all 6 themes
+
+---
+
+## Session — April 21, 2026 (layout redesign + polish)
+
+AI-assisted work in this session includes:
+- Committed and pushed 2 previously unpushed watch-theme commits; opened PR #6 for the watch dial system
+- Removed the in/out-of-office availability indicator from the nameplate and all supporting JS (`loadAvailability`, `renderAvailability`, related DOM refs, `availabilityUrl` constant)
+- Increased hero section row from 38% to 44% of stage height to fix the clock face clipping into the quote card
+- Redesigned `.hero__widgets` from a centered flex row to a three-column CSS grid (`1fr auto 1fr`): mock office hours panel on the left, clock centered, weather subdial on the right
+- Added static office hours panel (Mon/Wed/Fri schedule + room CN 204) styled as a watch complication card matching the dial aesthetic
+- Removed the `.hero::after` "COMPUTER SCIENCE" watermark pseudo-element (redundant with the top bar)
+- Fixed vertical alignment of side panels: switched grid to `align-items: start` with `margin-top: 8cqw` on both side panels, placing their visual centers at 14cqw — the same as the 28cqw clock face center
+- Iterated on horizontal spacing: landed on `justify-self: center` for both panels, placing each panel's center equidistant from the clock center and its screen edge
+- Restructured weather card from a flex stack to absolute positioning within the circle: icon anchored at the top, label hidden, temp+desc group at `translate(-50%, -50%)` from the geometric center so the temperature number is the true visual anchor
+- Refreshed all 6 canonical `signage-<theme>.png` screenshots after each layout change

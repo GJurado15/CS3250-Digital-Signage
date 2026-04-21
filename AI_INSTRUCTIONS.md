@@ -54,10 +54,9 @@ Read("/tmp/s.png")
 |------|------|
 | `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. |
 | `styles.css` | All visual design. This is where most work happens. |
-| `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes, availability. Imports from `utils.js`. |
+| `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes. Imports from `utils.js`. |
 | `utils.js` | Pure utility functions (no DOM, no network). Imported by `app.js` and tested by Jest. |
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
-| `availability.json` | Professor's in/out status. Edited independently by the client. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
 
 ## Tooling
@@ -99,9 +98,17 @@ npm run docs      # jsdoc — generates HTML docs in docs/
 
 **Layout grid** (`.signage-stage`):
 ```css
-grid-template-rows: 4.5% 38% 1fr;
-/* top-bar | hero (clock/quote/weather) | rss-section (headlines) */
+grid-template-rows: 4.5% 44% 1fr;
+/* top-bar | hero (office hours / clock / weather / quote) | rss-section (headlines) */
 ```
+
+**Hero widget row** — three-column CSS grid inside `.hero__widgets`:
+```
+[ office hours panel ] [ analog clock (centered) ] [ weather subdial ]
+```
+- `grid-template-columns: 1fr auto 1fr` — clock takes its natural 28cqw width, side columns share remaining space equally
+- Side panels use `justify-self: center` — each centered in its half, equidistant from the clock center and screen edge
+- Side panels use `margin-top: 8cqw` — aligns their visual centers with the 28cqw clock face center (14cqw from top)
 
 **Color palette:**
 ```

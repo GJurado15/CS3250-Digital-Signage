@@ -14,7 +14,7 @@ python3 server.py
 http://127.0.0.1:8000/
 ```
 
-The server must be running for the app to load `config.json`, `availability.json`, and to proxy RSS feeds.
+The server must be running for the app to load `config.json` and to proxy RSS feeds.
 
 ---
 
@@ -24,10 +24,9 @@ The server must be running for the app to load `config.json`, `availability.json
 |------|---------|
 | `index.html` | Page structure — rarely needs editing |
 | `styles.css` | All visual design |
-| `app.js` | Clock, weather, RSS, quotes, QR codes, availability |
+| `app.js` | Clock, weather, RSS, quotes, QR codes |
 | `utils.js` | Pure utility functions (no DOM/network) — shared by `app.js` and tests |
 | `config.json` | All configurable content — **edit this for day-to-day changes** |
-| `availability.json` | Office in/out status — **edit this to update availability** |
 | `server.py` | Local dev/kiosk server with built-in CORS proxy |
 | `start-kiosk.sh` | Raspberry Pi launcher |
 | `watchcreation.md` | Technical guide to the watch dial system — DOM structure, CSS techniques, pitfalls |
@@ -55,18 +54,6 @@ Tests live in `utils.test.js` and cover the 11 pure utility functions in `utils.
 ---
 
 ## Configuration
-
-### `availability.json`
-
-```json
-{
-  "enabled": true,
-  "status": "Out of Office",
-  "detail": "Back Monday at 9:00 AM"
-}
-```
-
-Set `"enabled": false` to hide the availability card entirely.
 
 ### `config.json`
 
@@ -137,7 +124,7 @@ The analog clock cycles through 6 vintage watch dial archetypes — one per day,
 
 To force a specific theme during development, add `?theme=diver` (or any theme name) to the URL.
 
-Reference screenshots for all 6 themes are saved as `watch-polish-<name>.png` in the project root.
+Reference screenshots for all 6 themes are saved as `signage-<name>.png` in the project root.
 
 See `watchcreation.md` for the full technical guide to the dial system.
 
