@@ -694,12 +694,7 @@ body {
 .weather-card {
   justify-self: center;
   margin-top: 8cqw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3cqw;
-  padding: 1.8cqw;
+  display: block;
   width: 12cqw;
   height: 12cqw;
   background:
@@ -716,26 +711,31 @@ body {
     inset 0 0.25cqw 1cqw rgba(0,0,0,0.1);
 }
 
+/* Icon floats at the top of the circle */
 .weather-card__icon {
-  font-size: 2.8cqw;
+  position: absolute;
+  top: 1.4cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2cqw;
   line-height: 1;
-  text-align: center;
 }
 
+/* Label is redundant inside the circle — hide it */
+.weather-card__label {
+  display: none;
+}
+
+/* Temp + desc group anchored at the geometric center */
 .weather-card__details {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.weather-card__label {
-  font-size: 0.8cqw;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgba(26,22,8,0.35);
-  line-height: 1;
-  text-align: center;
+  gap: 0.2cqw;
 }
 
 .weather-card__temp {
@@ -744,16 +744,16 @@ body {
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--ink);
-  text-align: center;
+  white-space: nowrap;
 }
 
 .weather-card__desc {
-  font-size: 0.92cqw;
+  font-size: 0.8cqw;
   font-weight: 500;
   color: rgba(26,22,8,0.4);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  text-align: center;
+  white-space: nowrap;
 }
 
 /* ── RSS SECTION — movement caseback ── */
