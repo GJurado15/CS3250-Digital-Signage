@@ -6,6 +6,8 @@ import {
 
 const configUrl = "config.json";
 
+const fallbackImageSvg = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22grid%22%20width%3D%2210%22%20height%3D%2210%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Cpath%20d%3D%22M%2010%200%20L%200%200%200%2010%22%20fill%3D%22none%22%20stroke%3D%22%232a2618%22%20stroke-width%3D%221%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23151210%22%2F%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22url%28%23grid%29%22%2F%3E%3Cg%20transform%3D%22translate%28100%2C%2095%29%22%20fill%3D%22none%22%20stroke%3D%22%23c8a848%22%20stroke-linecap%3D%22square%22%20stroke-linejoin%3D%22miter%22%3E%3Cpath%20d%3D%22M0%20-50%20L-50%2040%20L50%2040%20Z%22%20stroke%3D%22%23c8102e%22%20stroke-width%3D%224%22%20transform%3D%22translate%28-4%2C%202%29%22%20opacity%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M0%20-50%20L-50%2040%20L50%2040%20Z%22%20stroke%3D%22%234060a8%22%20stroke-width%3D%224%22%20transform%3D%22translate%284%2C%20-2%29%22%20opacity%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M0%20-50%20L-50%2040%20L50%2040%20Z%22%20stroke%3D%22%23c8a848%22%20stroke-width%3D%226%22%20fill%3D%22%231a1814%22%2F%3E%3Cline%20x1%3D%220%22%20y1%3D%22-15%22%20x2%3D%220%22%20y2%3D%2215%22%20stroke-width%3D%228%22%2F%3E%3Crect%20x%3D%22-4%22%20y%3D%2225%22%20width%3D%228%22%20height%3D%228%22%20fill%3D%22%23c8a848%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M-60%2050%20L-40%2050%20M40%2050%20L60%2050%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M0%20-70%20L0%20-60%22%20stroke-width%3D%223%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+
 const logo = document.getElementById("logo");
 const displayName = document.getElementById("display-name");
 const timeText = document.getElementById("time-text");
@@ -303,9 +305,15 @@ function renderRssPages(pages, rssConfig) {
         thumb.classList.remove("rss-item__thumb--hidden");
         node.classList.add("rss-item--has-image");
         thumb.onerror = () => {
-          thumb.classList.add("rss-item__thumb--hidden");
-          node.classList.remove("rss-item--has-image");
+          thumb.onerror = null;
+          thumb.src = fallbackImageSvg;
+          thumb.alt = "System alert";
         };
+      } else {
+        thumb.src = fallbackImageSvg;
+        thumb.alt = "System alert";
+        thumb.classList.remove("rss-item__thumb--hidden");
+        node.classList.add("rss-item--has-image");
       }
 
       if (item.link) {
@@ -362,8 +370,9 @@ async function fillOgImages(items, proxyTemplates) {
         thumb.classList.remove("rss-item__thumb--hidden");
         node.classList.add("rss-item--has-image");
         thumb.onerror = () => {
-          thumb.classList.add("rss-item__thumb--hidden");
-          node.classList.remove("rss-item--has-image");
+          thumb.onerror = null;
+          thumb.src = fallbackImageSvg;
+          thumb.alt = "System alert";
         };
       })
   );
@@ -578,5 +587,3 @@ function normalizeFeedText(text, minLength = 30) {
   // If what's left is too short to be real content (metadata remnants), discard it
   return cleaned.length < minLength ? "" : cleaned;
 }
-
-
