@@ -1,4 +1,4 @@
-# AI_INSTRUCTIONS.md — AI Agent Guide
+# CLAUDE.md — AI Agent Guide
 
 This document is written for an AI assistant picking up this project cold. It contains everything needed to understand, run, and improve the display without re-deriving context from the code.
 
@@ -44,7 +44,22 @@ Read("/tmp/s.png")
 - `--virtual-time-budget=20000` gives 20 seconds of simulated JS execution time. This is necessary because the app fetches OG images for articles that don't have feed images — this takes real network time. 8000ms is too short now; use 20000.
 - The server must be running before screenshotting. Check with curl first.
 - Animations are frozen at the virtual time snapshot — don't design around them.
-- After CSS/JS changes, the screenshot reflects them immediately (no cache issue in headless). The *browser* caches aggressively — tell the user to use Ctrl+Shift+R or clear cache in DevTools.
+- After CSS/JS changes, the screenshot reflects them immediately (no cache issue in headless). The *browser* caches aggressively — tell the user to use Ctrl+Shift+R or disable cache in DevTools.
+
+### Canonical Screenshots
+
+After any polishing loop, regenerate all 6 `signage-<theme>.png` files in the project root so the user can open them immediately to review results:
+
+```bash
+for theme in sector diver flieger dress field chrono; do
+  chromium-browser --headless \
+    --screenshot="signage-${theme}.png" \
+    --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
+    "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
+done
+```
+
+These are the committed reference images — open any `signage-*.png` directly in your file browser to see the final result for each theme. Always regenerate them at the end of a polish session before reporting work complete.
 
 ---
 
@@ -52,12 +67,12 @@ Read("/tmp/s.png")
 
 | File | Role |
 |------|------|
-| `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. |
+| `index.html` | DOM structure and `<template>` for RSS cards. Rarely changes. Office hours list and location are empty stubs — populated by `renderOfficeHours()` in `app.js`. |
 | `styles.css` | All visual design. This is where most work happens. |
-| `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes, availability. Imports from `utils.js`. |
+| `app.js` | Runtime logic: clock, weather, RSS pipeline, QR codes, quotes. Imports from `utils.js`. |
 | `utils.js` | Pure utility functions (no DOM, no network). Imported by `app.js` and tested by Jest. |
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
-| `availability.json` | Professor's in/out status. Edited independently by the client. |
+| `office-hours.json` | **Office hours only** — location and weekly schedule. Fetched independently at boot. Edit this for semester changes. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
 
 ## Tooling
@@ -99,9 +114,17 @@ npm run docs      # jsdoc — generates HTML docs in docs/
 
 **Layout grid** (`.signage-stage`):
 ```css
-grid-template-rows: 4.5% 38% 1fr;
-/* top-bar | hero (clock/quote/weather) | rss-section (headlines) */
+grid-template-rows: 4.5% 44% 1fr;
+/* top-bar | hero (office hours / clock / weather / quote) | rss-section (headlines) */
 ```
+
+**Hero widget row** — three-column CSS grid inside `.hero__widgets`:
+```
+[ office hours panel ] [ analog clock (centered) ] [ weather subdial ]
+```
+- `grid-template-columns: 1fr auto 1fr` — clock takes its natural 28cqw width, side columns share remaining space equally
+- Side panels use `justify-self: center` — each centered in its half, equidistant from the clock center and screen edge
+- Side panels use `margin-top: 8cqw` — aligns their visual centers with the 28cqw clock face center (14cqw from top)
 
 **Color palette:**
 ```
@@ -120,7 +143,7 @@ Top bar:       dark charcoal (#2e2a1e)
 - UI: Inter (sans-serif, weights 100–900)
 - Quotes: Playfair Display (serif, italic)
 
-**Visual theme:** Vintage watch — Mode 1 (Sector Dial, 1930s American two-tone). See planned modes below.
+**Visual theme:** Vintage watch — 6 daily-cycling dial archetypes. See Watch Theme System below and `watchcreation.md` for the full technical guide.
 
 ---
 
@@ -229,47 +252,15 @@ Open-Meteo API — free, no API key. Coordinates set in `config.json`. Refreshes
 
 ## Watch Theme System
 
-6 CSS dial archetypes rotate daily. The active theme is set in `applyWatchTheme()` in `app.js` using `getQuoteDayIndex()` — same stable daily-index logic used for quote rotation.
+6 CSS dial archetypes rotate daily, selected by `applyWatchTheme()` in `app.js` using `getQuoteDayIndex()`. Use `?theme=<name>` to force any theme during development.
 
 ```js
 const watchThemes = ["watch--sector","watch--diver","watch--flieger","watch--dress","watch--field","watch--chrono"];
-// theme = watchThemes[dayIndex % watchThemes.length]
 ```
 
-A `?theme=<name>` query parameter forces a specific theme for development/preview.
+Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference screenshots live in the project root as `signage-<name>.png`.
 
-### Themes
-
-| Class | Archetype | Key traits |
-|---|---|---|
-| `watch--sector` | Sector dial | Cream/brass two-tone, Railmaster hairline crosshair |
-| `watch--diver` | Submariner diver | Black dial, luminous pips, inverted-triangle at 12, batons at 3/6/9, bezel numbers |
-| `watch--flieger` | B-Uhr pilot | Black dial, all 12 large white Arabic numerals, triangle at 12 |
-| `watch--dress` | Dress watch | Silver/white dial, Playfair Display italic Roman numerals (I–XII), dauphine hands |
-| `watch--field` | Field/military | Warm khaki dial, cardinals-only (12/3/6/9), railroad baton markers, broad arrow hands |
-| `watch--chrono` | Panda chronograph | Cream center + dark tachymeter ring, 3 subdials at 3/6/9 with hands and tick rings |
-
-### How themes work
-
-Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Overrides cover:
-- `background` — dial colors/gradients, bezel, subdials
-- `box-shadow` — bezel ring treatment
-- `::before` — inner bezel ring / boundary
-- `::after` — "AUDEMARS BEATY" brand text (top of dial, below 12)
-- `.analog-clock__ticks span::before` — tick mark color/size/shape
-- `.analog-clock__hand--*` — hand colors and shapes
-- `.analog-clock__center` — center cap color
-- `.analog-clock__numerals span` — numeral color/font, or pip markers via `::before`
-
-**Roman numerals (dress):** Arabic numeral spans have `font-size: 0; color: transparent` and the Roman numeral is set via `::before { content: "XII" }` using `nth-child` selectors (1–12 in DOM order).
-
-**Diver pips:** Numeral spans have `font-size: 0` and display a luminous dot via `::before` — round for standard hours, elongated baton for 3/6/9, inverted triangle for 12.
-
-**Chrono subdials:** Three recessed circles are rendered entirely as layered `radial-gradient` entries in `.analog-clock.watch--chrono`'s `background`. Hands and center pins are `linear-gradient` layers at the exact subdial coordinates (30%/50%, 70%/50%, 50%/70%).
-
-### Brand name
-
-All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's surname) via `.analog-clock::after`, positioned at `top: 28%` — correct watchmaking position just below the 12 o'clock marker. Light-dial themes (sector, dress) override the color to a dark ink tone so it reads against the cream background.
+**For DOM structure, CSS techniques, visual differentiation rules, and known pitfalls — see `watchcreation.md`.**
 
 ---
 
@@ -282,6 +273,10 @@ All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's sur
 - `cqw` units throughout — scales perfectly to any viewport
 - `filter: contrast(1.03) saturate(0.92)` on the whole stage — subtle cinematic grade
 - Per-feed top-3 candidate pool for lead scoring (not just top-1)
+- Watch lume glows: `box-shadow` + `filter: drop-shadow()` stack for true luminous effect
+- Chrono subdials entirely in CSS `background` gradients — zero extra DOM elements
+- `clip-path: polygon(...)` on hand elements for broad-arrow, dauphine, and spearhead shapes
+- Z-index stacking in the clock: `::before` ring = 6, hands = 8, center jewel = 10, crystal face = 20 — hands must sit above the chapter ring
 
 ## Things That Don't Work / Pitfalls
 
@@ -292,3 +287,8 @@ All themes show `"AUDEMARS BEATY"` (pun on Audemars Piguet + the professor's sur
 - Animations in screenshots — headless Chrome freezes at snapshot time
 - The browser caches JS/CSS aggressively — tell users Ctrl+Shift+R or disable cache in DevTools
 - `0` as a CSS grid track size — causes layout artifacts; use `display:none` on the element instead
+- Lume `box-shadow` glow on watch pips is clipped by the parent circle — always pair with `filter: drop-shadow()`
+- Chrono subdial gradient stops are % of farthest-corner distance, not element width — small % values produce tiny subdials
+- Brand text `::after` defaults to cream — light-dial themes (sector, dress) must override to dark ink
+- Clip-path hand direction: in `.analog-clock__hand`, `0%` = outermost tip, `100%` = pivot end. All pointed shapes must place the tip at `50% 0%` — if the arrow points inward, the polygon is inverted
+- Chrono numerals must be hidden (`font-size: 0 !important`) — leaving them visible causes the numeral spans to appear over the tachymeter ring and subdial tick dots

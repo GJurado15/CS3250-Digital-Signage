@@ -5,13 +5,9 @@ import {
 } from "./utils.js";
 
 const configUrl = "config.json";
-const availabilityUrl = "availability.json";
 
 const logo = document.getElementById("logo");
 const displayName = document.getElementById("display-name");
-const availabilityCard = document.getElementById("availability-card");
-const availabilityStatus = document.getElementById("availability-status");
-const availabilityDetail = document.getElementById("availability-detail");
 const timeText = document.getElementById("time-text");
 const dateText = document.getElementById("date-text");
 const hourHand = document.getElementById("hour-hand");
@@ -46,18 +42,24 @@ boot();
 
 async function boot() {
   try {
-    const response = await fetch(configUrl, { cache: "no-store" });
-    if (!response.ok) {
+    const [configRes, officeHoursRes] = await Promise.all([
+      fetch(configUrl, { cache: "no-store" }),
+      fetch("office-hours.json", { cache: "no-store" }).catch(() => null)
+    ]);
+
+    if (!configRes.ok) {
       throw new Error(`Unable to load ${configUrl}`);
     }
 
-    activeConfig = await response.json();
+    activeConfig = await configRes.json();
+    const officeHours = officeHoursRes?.ok ? await officeHoursRes.json() : {};
+
     applyBranding(activeConfig);
+    renderOfficeHours(officeHours);
     applyWatchTheme(activeConfig.timezone || "America/Denver");
     startClock(activeConfig.timezone || "America/Denver");
     renderQuote(activeConfig.quotes);
     await Promise.allSettled([
-      loadAvailability(),
       loadWeather(activeConfig.weather),
       loadRss(activeConfig.rss)
     ]);
@@ -91,35 +93,18 @@ function applyBranding(config) {
   displayName.textContent = config.displayName || "Your Name";
 }
 
-async function loadAvailability() {
-  try {
-    const response = await fetch(availabilityUrl, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Unable to load ${availabilityUrl}`);
-    }
+function renderOfficeHours(officeHours = {}) {
+  const list = document.getElementById("office-hours-list");
+  const locationEl = document.getElementById("office-hours-location");
+  const schedule = Array.isArray(officeHours.schedule) ? officeHours.schedule : [];
 
-    const availability = await response.json();
-    renderAvailability(availability);
-  } catch (error) {
-    console.warn(error);
-    renderAvailability({ enabled: false });
-  }
-}
+  list.innerHTML = schedule.map(({ day, time }) => `
+    <li class="office-hours-card__row">
+      <span class="office-hours-card__day">${day}</span>
+      <span class="office-hours-card__time">${time}</span>
+    </li>`).join("");
 
-function renderAvailability(availability = {}) {
-  if (!availability.enabled) {
-    availabilityCard.hidden = true;
-    return;
-  }
-
-  availabilityCard.hidden = false;
-  availabilityStatus.textContent = availability.status || "Available";
-  availabilityDetail.textContent = availability.detail || "";
-  availabilityDetail.hidden = !availability.detail;
-
-  const isIn = /in\s+office|available/i.test(availability.status || "");
-  availabilityCard.classList.toggle("availability-card--in", isIn);
-  availabilityCard.classList.toggle("availability-card--out", !isIn);
+  locationEl.textContent = officeHours.location || "";
 }
 
 function renderQuote(quotesConfig = {}) {

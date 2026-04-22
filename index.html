@@ -23,11 +23,6 @@
           </div>
           <div class="hero__nameplate">
             <h1 id="display-name" class="hero__name">Your Name</h1>
-            <section class="availability-card panel" id="availability-card" hidden>
-              <div class="availability-card__label">Availability</div>
-              <div id="availability-status" class="availability-card__status"></div>
-              <div id="availability-detail" class="availability-card__detail"></div>
-            </section>
           </div>
         </div>
 
@@ -37,6 +32,12 @@
         </section>
 
         <div class="hero__widgets">
+          <section class="office-hours-card panel">
+            <div class="office-hours-card__title">Office Hours</div>
+            <ul class="office-hours-card__list" id="office-hours-list"></ul>
+            <div class="office-hours-card__location" id="office-hours-location"></div>
+          </section>
+
           <section class="clock-card panel">
             <div class="analog-clock" aria-label="Current time">
               <div class="analog-clock__face"></div>

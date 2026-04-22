@@ -14,7 +14,7 @@ python3 server.py
 http://127.0.0.1:8000/
 ```
 
-The server must be running for the app to load `config.json`, `availability.json`, and to proxy RSS feeds.
+The server must be running for the app to load `config.json` and to proxy RSS feeds.
 
 ---
 
@@ -24,12 +24,12 @@ The server must be running for the app to load `config.json`, `availability.json
 |------|---------|
 | `index.html` | Page structure — rarely needs editing |
 | `styles.css` | All visual design |
-| `app.js` | Clock, weather, RSS, quotes, QR codes, availability |
+| `app.js` | Clock, weather, RSS, quotes, QR codes |
 | `utils.js` | Pure utility functions (no DOM/network) — shared by `app.js` and tests |
 | `config.json` | All configurable content — **edit this for day-to-day changes** |
-| `availability.json` | Office in/out status — **edit this to update availability** |
 | `server.py` | Local dev/kiosk server with built-in CORS proxy |
 | `start-kiosk.sh` | Raspberry Pi launcher |
+| `watchcreation.md` | Technical guide to the watch dial system — DOM structure, CSS techniques, pitfalls |
 
 ---
 
@@ -53,23 +53,34 @@ Tests live in `utils.test.js` and cover the 11 pure utility functions in `utils.
 
 ---
 
-## Configuration
+## Office Hours
 
-### `availability.json`
+Edit **`office-hours.json`** at the root of the project — it's the only thing in that file:
 
 ```json
 {
-  "enabled": true,
-  "status": "Out of Office",
-  "detail": "Back Monday at 9:00 AM"
+  "location": "CN 204",
+  "schedule": [
+    { "day": "Mon", "time": "10:00–11:00 AM" },
+    { "day": "Wed", "time": "10:00–11:00 AM" },
+    { "day": "Fri", "time":  "2:00–3:00 PM"  }
+  ]
 }
 ```
 
-Set `"enabled": false` to hide the availability card entirely.
+- Add, remove, or reorder rows in `schedule` to match the current semester.
+- Change `location` for the room number.
+- Days and times are plain strings — write them however you like (`"Tue/Thu"`, `"By appointment"`, etc.).
+
+---
+
+## Configuration
 
 ### `config.json`
 
-Controls display name, logo, quotes, weather location, and RSS feeds. The RSS section is the most commonly changed part:
+Controls display name, logo, quotes, weather location, and RSS feeds. Edit this file — never touch `index.html` — for day-to-day updates.
+
+#### RSS Feeds
 
 ```json
 "rss": {
@@ -125,16 +136,20 @@ This starts `server.py` and opens Chromium in fullscreen kiosk mode.
 
 The analog clock cycles through 6 vintage watch dial archetypes — one per day, stable across page reloads:
 
-| Theme | Archetype |
-|---|---|
-| Sector | 1930s two-tone cream/brass with Railmaster crosshair |
-| Diver | Submariner-style black dial, luminous pips, bezel numbers |
-| Flieger | B-Uhr pilot watch, oversized Arabic numerals, triangle at 12 |
-| Dress | Minimal silver dial with Playfair Display italic Roman numerals |
-| Field | Hamilton Khaki-inspired, warm khaki dial, cardinal numerals only |
-| Chrono | Speedmaster panda dial with three decorative subdials at 3/6/9 |
+| Theme | Archetype | Key traits |
+|---|---|---|
+| Sector | 1930s two-tone | Cream inner field + dark outer ring, hairline crosshair, cobalt blued-steel hands |
+| Diver | Submariner | All-black dial, multi-layer glowing lume pips, inverted triangle at 12, lume-stripe hands |
+| Flieger | B-Uhr pilot | Matte black, all 12 large Arabic numerals, white triangle at 12, spearhead hands (matte grey-silver, no lume) |
+| Dress | Dress watch | Silver/champagne dial, Playfair Display italic Roman numerals, dauphine hands |
+| Field | Military/field | Warm khaki/olive dial, cardinals only (12/3/6/9), broad arrow hands |
+| Chrono | Panda chronograph | Cream center + dark tachymeter ring, three CSS-only subdials at 3/6/9 |
 
 To force a specific theme during development, add `?theme=diver` (or any theme name) to the URL.
+
+Reference screenshots for all 6 themes are saved as `signage-<name>.png` in the project root.
+
+See `watchcreation.md` for the full technical guide to the dial system.
 
 ---
 
@@ -144,4 +159,4 @@ Uses [Open-Meteo](https://open-meteo.com/) — free, no API key. Location is set
 
 ---
 
-See `AI_INSTRUCTIONS.md` for full technical and design documentation (intended for AI assistants continuing work on this project).
+See `CLAUDE.md` for full technical and design documentation (intended for AI assistants continuing work on this project).
