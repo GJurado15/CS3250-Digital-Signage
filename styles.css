@@ -220,58 +220,6 @@ body {
   text-shadow: 0 0.08cqw 0 rgba(255,255,255,0.6), 0 -0.05cqw 0 rgba(0,0,0,0.12);
 }
 
-/* ── AVAILABILITY — subdial badge ── */
-.availability-card {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55cqw;
-  padding: 0.3cqw 0.9cqw;
-  background: rgba(26,22,8,0.07);
-  border: 0.1cqw solid rgba(26,22,8,0.18);
-  border-radius: 99cqw;
-  width: fit-content;
-  box-shadow: inset 0 0.1cqw 0.3cqw rgba(0,0,0,0.08), 0 0.05cqw 0 rgba(255,255,255,0.5);
-}
-
-.availability-card__label { display: none; }
-
-.availability-card__status {
-  font-size: 1.15cqw;
-  font-weight: 600;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.45cqw;
-  color: var(--ink);
-}
-
-.availability-card__status::before {
-  content: "";
-  display: inline-block;
-  width: 0.55cqw;
-  height: 0.55cqw;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.availability-card--out .availability-card__status { color: #8b1a1a; }
-.availability-card--out .availability-card__status::before {
-  background: #c03030;
-  box-shadow: 0 0 0.5cqw rgba(192,48,48,0.5);
-}
-
-.availability-card--in .availability-card__status { color: #1a5420; }
-.availability-card--in .availability-card__status::before {
-  background: #2a8c44;
-  box-shadow: 0 0 0.5cqw rgba(42,140,68,0.5);
-}
-
-.availability-card__detail {
-  font-size: 1.05cqw;
-  color: rgba(26,22,8,0.45);
-  border-left: 0.08cqw solid rgba(26,22,8,0.18);
-  padding-left: 0.7cqw;
-}
 
 /* ── OFFICE HOURS — complication panel ── */
 .office-hours-card {
@@ -427,7 +375,6 @@ body {
   position: relative;
 }
 
-.hero__identity { display: none; }
 
 /* ── CLOCK — SECTOR DIAL ── */
 .clock-card {
@@ -563,7 +510,7 @@ body {
   left: 50%;
   top: 3%;
   transform: translateX(-50%);
-  border-radius: 1px;
+  border-radius: 0.09cqw;
 }
 
 /* Major tick marks (every 5th = hour positions) — brass */
@@ -657,8 +604,8 @@ body {
   line-height: 1;
   text-align: center;
   /* CSS trig — positions each numeral in the outer sector ring */
-  left: calc(50% + 36% * sin(calc(var(--h) * 30deg)));
-  top: calc(50% - 36% * cos(calc(var(--h) * 30deg)));
+  left: calc(50% + 40% * sin(calc(var(--h) * 30deg)));
+  top: calc(50% - 40% * cos(calc(var(--h) * 30deg)));
   transform: translate(-50%, -50%);
   letter-spacing: -0.03em;
 }
@@ -912,7 +859,6 @@ body {
 .rss-item__summary { position: relative; z-index: 1; }
 
 .rss-item__headline { display: block; }
-.rss-item__icon { display: none; }
 
 .rss-item__title {
   margin: 0;
@@ -1054,23 +1000,23 @@ body {
    ─────────────────────────────────────────────────────────────────── */
 /* Brand text is cream by default (for dark dials) — override for sector's cream dial */
 .analog-clock.watch--sector::after {
-  color: rgba(26,22,8,0.32);
+  color: rgba(26,22,8,0.58);
 }
 
 .analog-clock.watch--sector {
   background:
-    /* Vertical crosshair — crisp Railmaster hairline */
+    /* Vertical crosshair — visible brass-tinted Railmaster line */
     linear-gradient(to right,
-      transparent calc(50% - 0.12cqw),
-      rgba(26,22,8,0.52) calc(50% - 0.12cqw),
-      rgba(26,22,8,0.52) calc(50% + 0.12cqw),
-      transparent calc(50% + 0.12cqw)),
+      transparent calc(50% - 0.20cqw),
+      rgba(80,60,20,0.78) calc(50% - 0.20cqw),
+      rgba(80,60,20,0.78) calc(50% + 0.20cqw),
+      transparent calc(50% + 0.20cqw)),
     /* Horizontal crosshair */
     linear-gradient(to bottom,
-      transparent calc(50% - 0.12cqw),
-      rgba(26,22,8,0.52) calc(50% - 0.12cqw),
-      rgba(26,22,8,0.52) calc(50% + 0.12cqw),
-      transparent calc(50% + 0.12cqw)),
+      transparent calc(50% - 0.20cqw),
+      rgba(80,60,20,0.78) calc(50% - 0.20cqw),
+      rgba(80,60,20,0.78) calc(50% + 0.20cqw),
+      transparent calc(50% + 0.20cqw)),
     /* Engine-turned sunburst guilloché — more definition */
     repeating-conic-gradient(
       from 0deg,
@@ -1109,6 +1055,31 @@ body {
     inset 0 0 0 0.25cqw rgba(0,0,0,0.45),
     inset 0 0 0.8cqw rgba(200,168,72,0.10);
   z-index: 6;
+}
+
+/* Blued steel sword hands — tapered tip, brighter cobalt for cream dial contrast */
+.watch--sector .analog-clock__hand--hour {
+  width: 5.5%;
+  height: 25%;
+  background: linear-gradient(90deg,
+    #080c1e 0%, #1a2848 20%, #3858a0 40%, #6080c8 50%, #3858a0 60%, #1a2848 80%, #080c1e 100%);
+  clip-path: polygon(50% 0%, 78% 18%, 62% 100%, 38% 100%, 22% 18%);
+  border-radius: 0;
+  box-shadow:
+    0.14cqw 0.14cqw 0.65cqw rgba(0,0,0,0.85),
+    0 0 0.5cqw rgba(50,90,200,0.25);
+}
+
+.watch--sector .analog-clock__hand--minute {
+  width: 3.5%;
+  height: 40%;
+  background: linear-gradient(90deg,
+    #080c1e 0%, #1a2848 20%, #3858a0 40%, #6080c8 50%, #3858a0 60%, #1a2848 80%, #080c1e 100%);
+  clip-path: polygon(50% 0%, 76% 12%, 62% 100%, 38% 100%, 24% 12%);
+  border-radius: 0;
+  box-shadow:
+    0.12cqw 0.12cqw 0.55cqw rgba(0,0,0,0.80),
+    0 0 0.4cqw rgba(50,90,200,0.20);
 }
 
 /* ── DIVER ──────────────────────────────────────────────────────────
@@ -1159,7 +1130,7 @@ body {
 
 .analog-clock.watch--diver::after {
   content: "AUDEMARS BEATY";
-  color: rgba(200,200,200,0.4);
+  color: rgba(220,220,220,0.68);
   font-size: 0.75cqw;
   top: 28%;
 }
@@ -1227,7 +1198,7 @@ body {
 .watch--diver .analog-clock__numerals span[style*="--h:3"]::before,
 .watch--diver .analog-clock__numerals span[style*="--h:6"]::before,
 .watch--diver .analog-clock__numerals span[style*="--h:9"]::before {
-  border-radius: 2px;
+  border-radius: 0.19cqw;
   width: 40%;
   height: 185%;
   background: linear-gradient(180deg, #f2fff2 0%, #c0f4c0 35%, rgba(80,200,80,0.9) 100%);
@@ -1294,29 +1265,32 @@ body {
 
 /* Mercedes/broad hands with lume center fill — stripe centered at 50% */
 .watch--diver .analog-clock__hand--hour {
-  width: 5.5%;
+  width: 6.5%;
   height: 25%;
+  /* Wide Mercedes body, vivid tritium-green lume core */
   background: linear-gradient(90deg,
-    #606060 0%, #c0c0c0 18%, #e0e0e0 32%,
-    #d0f5d0 38%, #90e890 50%, #d0f5d0 62%,
-    #e0e0e0 68%, #c0c0c0 82%, #606060 100%);
+    #484848 0%, #b8b8b8 16%, #e8e8e8 30%,
+    #c0ffa0 38%, #90ff70 48%, #d8ffb8 50%, #90ff70 52%, #c0ffa0 62%,
+    #e8e8e8 70%, #b8b8b8 84%, #484848 100%);
   border-radius: 20% 20% 0 0;
   box-shadow:
-    0.15cqw 0.15cqw 0.6cqw rgba(0,0,0,0.9),
-    0 0 0.4cqw rgba(120,240,120,0.2);
+    0.18cqw 0.18cqw 0.75cqw rgba(0,0,0,0.92),
+    0 0 0.7cqw rgba(100,255,80,0.40),
+    0 0 1.4cqw rgba(60,200,40,0.20);
 }
 
 .watch--diver .analog-clock__hand--minute {
-  width: 4%;
+  width: 5%;
   height: 40%;
   background: linear-gradient(90deg,
-    #606060 0%, #b8b8b8 16%, #d8d8d8 30%,
-    #c8f4c8 38%, #88e488 50%, #c8f4c8 62%,
-    #d8d8d8 70%, #b0b0b0 84%, #606060 100%);
-  border-radius: 10% 10% 0 0;
+    #484848 0%, #b0b0b0 16%, #d8d8d8 30%,
+    #b8ff98 38%, #80ff58 48%, #ccffaa 50%, #80ff58 52%, #b8ff98 62%,
+    #d8d8d8 70%, #a8a8a8 84%, #484848 100%);
+  border-radius: 12% 12% 0 0;
   box-shadow:
-    0.12cqw 0.12cqw 0.6cqw rgba(0,0,0,0.9),
-    0 0 0.35cqw rgba(120,240,120,0.18);
+    0.14cqw 0.14cqw 0.65cqw rgba(0,0,0,0.90),
+    0 0 0.6cqw rgba(100,255,80,0.35),
+    0 0 1.2cqw rgba(60,200,40,0.18);
 }
 
 .watch--diver .analog-clock__hand--second {
@@ -1381,14 +1355,14 @@ body {
 
 .analog-clock.watch--flieger::after {
   content: "AUDEMARS BEATY";
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.60);
   font-size: 0.8cqw;
   letter-spacing: 0.3em;
   top: 28%;
 }
 
 .watch--flieger .analog-clock__ticks span::before {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.62);
 }
 
 .watch--flieger .analog-clock__ticks span:nth-child(5n + 1)::before {
@@ -1400,8 +1374,8 @@ body {
 /* Triangle at 12 — the B-Uhr defining marker with lume fill */
 .watch--flieger .analog-clock__ticks span:nth-child(1)::before {
   background: linear-gradient(180deg, #f8fff8 0%, #d8f0d0 40%, rgba(140,220,130,0.95) 100%);
-  width: 4%;
-  height: 8%;
+  width: 5.5%;
+  height: 9%;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   box-shadow: none;
   filter:
@@ -1411,27 +1385,28 @@ body {
 
 /* Spearhead hands — distinct from diver, classic Luftwaffe observer style */
 .watch--flieger .analog-clock__hand--hour {
-  width: 6%;
+  width: 6.5%;
   height: 25%;
+  /* Near-white center stripe — maximum legibility on matte black, B-Uhr style */
   background: linear-gradient(90deg,
-    #383832 0%, #808078 18%,
-    #c8c8c0 38%, #e0e0d8 50%,
-    #c8c8c0 62%, #808078 82%, #383832 100%);
+    #282820 0%, #686860 18%,
+    #dcdcd4 36%, #f5f5f0 50%,
+    #dcdcd4 64%, #686860 82%, #282820 100%);
   clip-path: polygon(50% 0%, 84% 20%, 62% 100%, 38% 100%, 16% 20%);
   border-radius: 0;
-  box-shadow: 0.15cqw 0.15cqw 0.6cqw rgba(0,0,0,0.92);
+  box-shadow: 0.18cqw 0.18cqw 0.7cqw rgba(0,0,0,0.95);
 }
 
 .watch--flieger .analog-clock__hand--minute {
-  width: 4.5%;
+  width: 5%;
   height: 42%;
   background: linear-gradient(90deg,
-    #383832 0%, #808078 18%,
-    #c0c0b8 38%, #d8d8d0 50%,
-    #c0c0b8 62%, #808078 82%, #383832 100%);
+    #282820 0%, #686860 18%,
+    #d4d4cc 36%, #f0f0e8 50%,
+    #d4d4cc 64%, #686860 82%, #282820 100%);
   clip-path: polygon(50% 0%, 80% 14%, 62% 100%, 38% 100%, 20% 14%);
   border-radius: 0;
-  box-shadow: 0.12cqw 0.12cqw 0.55cqw rgba(0,0,0,0.88);
+  box-shadow: 0.15cqw 0.15cqw 0.65cqw rgba(0,0,0,0.92);
 }
 
 /* Red seconds with lollipop counterweight */
@@ -1522,7 +1497,7 @@ body {
 
 .analog-clock.watch--dress::after {
   content: "AUDEMARS BEATY";
-  color: rgba(100,90,75,0.35);
+  color: rgba(72,62,46,0.60);
   font-size: 0.75cqw;
   letter-spacing: 0.35em;
   top: 28%;
@@ -1530,9 +1505,9 @@ body {
 
 /* Dress: fine minute dots, clean applied indices at hours */
 .watch--dress .analog-clock__ticks span::before {
-  background: rgba(90,80,65,0.60);
-  width: 0.5%;
-  height: 2.8%;
+  background: rgba(80,70,55,0.72);
+  width: 0.7%;
+  height: 3.2%;
   border-radius: 50%;
 }
 
@@ -1540,7 +1515,7 @@ body {
   background: rgba(58,50,38,0.90);
   width: 0.7%;
   height: 7%;
-  border-radius: 0.5px;
+  border-radius: 0.05cqw;
   top: 0.5%;
 }
 
@@ -1548,39 +1523,36 @@ body {
   background: rgba(45,38,28,0.96);
   width: 0.9%;
   height: 8.5%;
-  border-radius: 0.5px;
+  border-radius: 0.05cqw;
   top: 0.2%;
   box-shadow: none;
 }
 
 .watch--dress .analog-clock__hand--hour {
-  width: 2.6%;
+  width: 3%;
   height: 24%;
+  /* Polished steel with brilliant center facet — high-end dress finish */
   background: linear-gradient(90deg,
-    #28241a 0%, #504c40 20%,
-    #908880 38%, #b8b4aa 50%,
-    #908880 62%, #504c40 80%, #28241a 100%);
-  /* Dauphine: pointed tip at outermost (0%), wide at base */
+    #1e1a12 0%, #403c30 18%,
+    #9c9488 36%, #cac4bc 44%, #e0dcd4 50%, #cac4bc 56%, #9c9488 64%, #403c30 82%, #1e1a12 100%);
   clip-path: polygon(50% 0%, 82% 28%, 65% 100%, 35% 100%, 18% 28%);
   border-radius: 0;
   box-shadow:
-    0 0.14cqw 0.6cqw rgba(0,0,0,0.65),
-    0.06cqw 0.06cqw 0.2cqw rgba(255,255,255,0.12);
+    0 0.16cqw 0.65cqw rgba(0,0,0,0.70),
+    0.08cqw 0.08cqw 0.25cqw rgba(255,255,255,0.20);
 }
 
 .watch--dress .analog-clock__hand--minute {
-  width: 1.8%;
+  width: 2.2%;
   height: 39%;
   background: linear-gradient(90deg,
-    #28241a 0%, #504c40 20%,
-    #908880 38%, #b8b4aa 50%,
-    #908880 62%, #504c40 80%, #28241a 100%);
-  /* Dauphine: pointed tip at outermost (0%), wide at base */
+    #1e1a12 0%, #403c30 18%,
+    #948c80 36%, #c4beb6 44%, #dcd8d0 50%, #c4beb6 56%, #948c80 64%, #403c30 82%, #1e1a12 100%);
   clip-path: polygon(50% 0%, 78% 22%, 63% 100%, 37% 100%, 22% 22%);
   border-radius: 0;
   box-shadow:
-    0 0.12cqw 0.5cqw rgba(0,0,0,0.6),
-    0.05cqw 0.05cqw 0.15cqw rgba(255,255,255,0.10);
+    0 0.13cqw 0.55cqw rgba(0,0,0,0.65),
+    0.06cqw 0.06cqw 0.18cqw rgba(255,255,255,0.16);
 }
 
 .watch--dress .analog-clock__hand--second {
@@ -1691,7 +1663,7 @@ body {
 
 .analog-clock.watch--field::after {
   content: "AUDEMARS BEATY";
-  color: rgba(240,228,182,0.45);
+  color: rgba(248,238,190,0.70);
   font-size: 0.75cqw;
   top: 28%;
 }
@@ -1745,31 +1717,32 @@ body {
 /* Broad arrow hands — the British military mark (War Department) */
 /* Arrowhead at tip (0% = outermost), shaft toward center (100%) */
 .watch--field .analog-clock__hand--hour {
-  width: 5.5%;
-  height: 26%;
+  width: 6.5%;
+  height: 27%;
+  /* Matte black body, high-contrast cream lume stripe down center — classic British military */
   background: linear-gradient(90deg,
-    #786a50 0%, #c0b890 18%,
-    #ede6c4 36%, #fdf6d8 50%,
-    #ede6c4 64%, #c0b890 82%, #786a50 100%);
+    #18160e 0%, #28251a 22%,
+    #f0ead0 38%, #fdf8e8 50%,
+    #f0ead0 62%, #28251a 78%, #18160e 100%);
   clip-path: polygon(50% 0%, 78% 30%, 65% 30%, 65% 100%, 35% 100%, 35% 30%, 22% 30%);
   border-radius: 0;
   box-shadow:
-    0.18cqw 0.18cqw 0.7cqw rgba(0,0,0,0.80),
-    inset 0 0.1cqw 0.25cqw rgba(255,248,210,0.35);
+    0.2cqw 0.2cqw 0.8cqw rgba(0,0,0,0.90),
+    0 0 0.6cqw rgba(240,230,180,0.15);
 }
 
 .watch--field .analog-clock__hand--minute {
-  width: 4%;
-  height: 41%;
+  width: 5%;
+  height: 42%;
   background: linear-gradient(90deg,
-    #786a50 0%, #b8b088 18%,
-    #e8e2c0 36%, #f8f2d0 50%,
-    #e8e2c0 64%, #b8b088 82%, #786a50 100%);
+    #18160e 0%, #28251a 22%,
+    #ecead0 38%, #faf8e8 50%,
+    #ecead0 62%, #28251a 78%, #18160e 100%);
   clip-path: polygon(50% 0%, 80% 26%, 70% 26%, 70% 100%, 30% 100%, 30% 26%, 20% 26%);
   border-radius: 0;
   box-shadow:
-    0.14cqw 0.14cqw 0.60cqw rgba(0,0,0,0.75),
-    inset 0 0.08cqw 0.2cqw rgba(255,248,210,0.28);
+    0.16cqw 0.16cqw 0.7cqw rgba(0,0,0,0.85),
+    0 0 0.5cqw rgba(240,230,180,0.12);
 }
 
 .watch--field .analog-clock__hand--second {
@@ -1807,19 +1780,6 @@ body {
    ─────────────────────────────────────────────────────────────────── */
 .analog-clock.watch--chrono {
   background:
-    /* ── Subdial hands pointing to 12-position from each center ── */
-    linear-gradient(to bottom,
-      transparent 36%, rgba(20,18,18,0.9) 36%,
-      rgba(20,18,18,0.9) 50%, transparent 50%
-    ) calc(30% - 0.25%) 0 / 0.5% 100% no-repeat,
-    linear-gradient(to bottom,
-      transparent 36%, rgba(20,18,18,0.9) 36%,
-      rgba(20,18,18,0.9) 50%, transparent 50%
-    ) calc(70% - 0.25%) 0 / 0.5% 100% no-repeat,
-    linear-gradient(to bottom,
-      transparent 57%, rgba(20,18,18,0.9) 57%,
-      rgba(20,18,18,0.9) 70%, transparent 70%
-    ) calc(50% - 0.25%) 0 / 0.5% 100% no-repeat,
     /* ── Subdial center pivot pins ── */
     radial-gradient(circle, #181616 0%, #181616 50%, transparent 51%) 30% 50% / 3% 3% no-repeat,
     radial-gradient(circle, #181616 0%, #181616 50%, transparent 51%) 70% 50% / 3% 3% no-repeat,
@@ -1900,7 +1860,7 @@ body {
 
 .analog-clock.watch--chrono::after {
   content: "AUDEMARS BEATY";
-  color: rgba(255,255,255,0.5);
+  color: rgba(55,44,26,0.65);
   font-size: 0.7cqw;
   letter-spacing: 0.22em;
   top: 28%;
@@ -1928,19 +1888,24 @@ body {
 
 /* Polished dark hands on the cream dial */
 .watch--chrono .analog-clock__hand--hour {
-  width: 5%;
+  width: 5.5%;
   height: 25%;
-  background: linear-gradient(90deg, #181616 0%, #3a3838 22%, #585656 42%, #3a3838 58%, #181616 100%);
-  border-radius: 2% 2% 0 0;
-  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.7);
+  /* Polished dark steel with sword taper — racing chronograph character */
+  background: linear-gradient(90deg,
+    #0e0c0c 0%, #2e2c2c 20%, #686464 40%, #787474 50%, #686464 60%, #2e2c2c 80%, #0e0c0c 100%);
+  clip-path: polygon(50% 0%, 82% 18%, 65% 100%, 35% 100%, 18% 18%);
+  border-radius: 0;
+  box-shadow: 0.12cqw 0.12cqw 0.55cqw rgba(0,0,0,0.78);
 }
 
 .watch--chrono .analog-clock__hand--minute {
-  width: 3%;
+  width: 3.5%;
   height: 40%;
-  background: linear-gradient(90deg, #181616 0%, #3a3838 22%, #585656 42%, #3a3838 58%, #181616 100%);
-  border-radius: 1% 1% 0 0;
-  box-shadow: 0.1cqw 0.1cqw 0.45cqw rgba(0,0,0,0.7);
+  background: linear-gradient(90deg,
+    #0e0c0c 0%, #2e2c2c 20%, #606060 40%, #707070 50%, #606060 60%, #2e2c2c 80%, #0e0c0c 100%);
+  clip-path: polygon(50% 0%, 80% 12%, 63% 100%, 37% 100%, 20% 12%);
+  border-radius: 0;
+  box-shadow: 0.1cqw 0.1cqw 0.5cqw rgba(0,0,0,0.72);
 }
 
 /* Red chronograph seconds hand */

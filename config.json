@@ -166,8 +166,6 @@
         "sourceName": "MIT News"
       }
     ],
-    "perFeed": 1,
-    "titleLines": 2,
     "summaryLength": 170,
     "refreshMinutes": 15,
     "proxies": [
