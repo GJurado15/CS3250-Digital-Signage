@@ -218,7 +218,7 @@ export function describeWeather(code) {
  * `feedUrl` string on the config object.
  *
  * @param {object} rssConfig - The rss block from config.json.
- * @param {Array<{feedUrl: string, sourceName?: string}>} [rssConfig.feeds]
+ * @param {Array<{feedUrl: string, sourceName: string}>} [rssConfig.feeds]
  * @param {string} [rssConfig.feedUrl]
  * @param {string} [rssConfig.sourceName]
  * @returns {Array<{feedUrl: string, sourceName: string}>} Normalized feed list.
