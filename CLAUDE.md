@@ -30,7 +30,7 @@ curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/
 This is the primary development workflow. Take a screenshot, look at it, make changes, repeat. Claude Code can run this autonomously.
 
 ```bash
-chromium-browser --headless --screenshot=/tmp/s.png \
+chromium --headless --screenshot=/tmp/s.png \
   --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
   http://127.0.0.1:8000/ 2>/dev/null
 ```
@@ -52,7 +52,7 @@ After any polishing loop, regenerate all 6 `signage-<theme>.png` files in the pr
 
 ```bash
 for theme in sector diver flieger dress field chrono; do
-  chromium-browser --headless \
+  chromium --headless \
     --screenshot="signage-${theme}.png" \
     --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
     "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
@@ -74,6 +74,8 @@ These are the committed reference images — open any `signage-*.png` directly i
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
 | `office-hours.json` | **Office hours only** — location and weekly schedule. Fetched independently at boot. Edit this for semester changes. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
+| `setup.sh` | One-time Raspberry Pi setup: installs deps, syncs NTP, fixes CA certs/fontconfig, wires autostart, reboots. |
+| `start-kiosk.sh` | Pi launcher: starts `server.py`, polls until ready, opens `chromium` in kiosk mode. Called by LXDE autostart on every boot. |
 
 ## Tooling
 
@@ -197,16 +199,11 @@ The local proxy (`server.py`) handles CORS server-side. The public proxies are f
 
 For items without a feed image, `fetchOgImage()` fetches the article page through the proxy and extracts `og:image` or `twitter:image` meta tags. This runs in parallel for all image-less items before rendering. This is why `--virtual-time-budget=20000` is needed.
 
-### Lead Story Selection (Engagement Scorer)
+### Lead Story Selection
 
-Instead of pure recency, the lead slot is awarded to the highest-scoring headline. `scoreHeadline()` in `app.js`:
+Lead slot goes to the most recent item overall. Each of the 3 remaining slots gets the most recent item from its respective feed. Items are sorted by timestamp.
 
-- **+5** — title contains `?`
-- **+3** — title starts with why/how/what/when/where/can/should/will/is/are/does/do
-- **+1 each** — power words: breakthrough, first, never, impossible, finally, actually, secret, revealed, surprising, unexpected, mystery, wrong, discover, real, inside, fear, love, hate, crisis, end of, rise of, death of, future, revolution, warning, new, biggest, worst, best, change
-- **-5 each** — boring signals: remembering, quarterly, earnings, devoted, volunteer, obituary, in memoriam, annual report, press release, advisory, q1/q2/q3/q4
-
-The scorer looks at the top 3 most-recent items from each feed (12 candidates total). The winner gets the lead slot. The 3 remaining slots each get the most-recent item from their respective feed.
+`scoreHeadline()` exists in `utils.js` (fully implemented and tested) but is not currently connected to the feed pipeline. It could be wired in as a future improvement to surface more engaging headlines over pure recency.
 
 ### HN Description Cleaning
 
@@ -268,11 +265,9 @@ Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference scr
 
 - CSS `-webkit-line-clamp` for title truncation — more accurate than JS character counting
 - OG image scraping via local proxy — gets images for feeds that don't embed them
-- `scoreHeadline()` for lead selection — surfaces engaging content without being random
 - `normalizeFeedText()` using a throwaway DOM element for entity decoding
 - `cqw` units throughout — scales perfectly to any viewport
 - `filter: contrast(1.03) saturate(0.92)` on the whole stage — subtle cinematic grade
-- Per-feed top-3 candidate pool for lead scoring (not just top-1)
 - Watch lume glows: `box-shadow` + `filter: drop-shadow()` stack for true luminous effect
 - Chrono subdials entirely in CSS `background` gradients — zero extra DOM elements
 - `clip-path: polygon(...)` on hand elements for broad-arrow, dauphine, and spearhead shapes

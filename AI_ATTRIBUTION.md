@@ -192,3 +192,17 @@ AI-assisted work in this session includes:
 - Updated `watchcreation.md`: flieger archetype description, spearhead hand technique, corrected broad-arrow and dauphine clip-path examples, z-index stacking table, clip-path orientation rule, chrono numerals pitfall
 - Updated `README.md`: flieger watch themes table row
 - Updated `CLAUDE.md`: z-index stacking and clip-path orientation in "Things That Work Well / Pitfalls"
+
+---
+
+## Session — April 28, 2026 (Pi deployment + codebase sanitization)
+
+AI-assisted work in this session includes:
+- Diagnosed Raspberry Pi deployment failures: identified SSL handshake errors caused by wrong system clock, missing fontconfig, and `chromium-browser` binary being renamed to `chromium` in Pi OS Bullseye+
+- Created `setup.sh` — one-time Pi setup script: installs chromium/fontconfig/ca-certificates, syncs NTP via `timedatectl`, rebuilds font cache, wires `start-kiosk.sh` into LXDE autostart, reboots with a 5-second cancellable countdown
+- Improved `start-kiosk.sh`: replaced `sleep 2` race condition with a `curl` poll loop, fixed `chromium-browser` → `chromium`, removed stale `/index.html` suffix from URL
+- Sanitized codebase: removed unused `.availability-card` CSS feature (~50 lines), dead `.hero__identity` and `.rss-item__icon` selectors, orphaned `perFeed` and `titleLines` keys from `config.json`
+- Converted 4 stray `border-radius: px` values to `cqw` to match project unit standard
+- Fixed `npm run docs` (jsdoc): `sourceName?: string` TypeScript optional syntax is not valid in JSDoc type expressions — removed the `?`
+- Corrected `CLAUDE.md`: `chromium-browser` → `chromium` in screenshot loop commands; Lead Story Selection section updated to reflect that `scoreHeadline()` exists in `utils.js` but is not currently wired into the feed pipeline; removed stale bullets from "Things That Work Well"
+- Updated `README.md`: Pi Setup section replaced with `setup.sh` one-liner workflow; corrected headline scoring claim to reflect actual timestamp-sort behavior

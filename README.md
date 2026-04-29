@@ -28,7 +28,8 @@ The server must be running for the app to load `config.json` and to proxy RSS fe
 | `utils.js` | Pure utility functions (no DOM/network) — shared by `app.js` and tests |
 | `config.json` | All configurable content — **edit this for day-to-day changes** |
 | `server.py` | Local dev/kiosk server with built-in CORS proxy |
-| `start-kiosk.sh` | Raspberry Pi launcher |
+| `setup.sh` | One-time Raspberry Pi setup — installs deps, fixes NTP/certs, wires autostart |
+| `start-kiosk.sh` | Raspberry Pi launcher — starts server, waits for it, opens Chromium kiosk |
 | `watchcreation.md` | Technical guide to the watch dial system — DOM structure, CSS techniques, pitfalls |
 
 ---
@@ -102,33 +103,23 @@ Controls display name, logo, quotes, weather location, and RSS feeds. Edit this 
 | Quanta Magazine (CS) | CS theory and research, academic credibility |
 | MIT News (CS) | Direct from MIT CS department, zero editorial risk |
 
-Headlines are scored for engagement — a question-formatted or emotionally resonant headline wins the lead slot regardless of which feed it came from.
+Headlines are sorted by recency — the most recent item from each feed is shown, with the lead slot going to the most recent overall.
 
 ---
 
 ## Raspberry Pi Setup
 
-1. Copy the project folder to the Pi
-2. Ensure Python 3 and Chromium are installed
-3. Make the launcher executable:
+Clone the repo on the Pi and run the setup script once:
 
 ```bash
-chmod +x start-kiosk.sh
+git clone https://github.com/GJurado15/CS3250-Digital-Signage.git
+cd CS3250-Digital-Signage
+bash setup.sh
 ```
 
-4. Run:
+`setup.sh` installs Chromium, fontconfig, and CA certificates; syncs the system clock (fixes SSL issues); and wires `start-kiosk.sh` into LXDE autostart. It reboots automatically after a 5-second countdown.
 
-```bash
-./start-kiosk.sh
-```
-
-This starts `server.py` and opens Chromium in fullscreen kiosk mode.
-
-**Auto-start on boot** — add to `~/.config/lxsession/LXDE-pi/autostart`:
-
-```
-@/home/pi/CS3250-Digital-Signage/start-kiosk.sh
-```
+After the reboot, the kiosk starts on every boot — no manual steps needed. The Pi must be configured to auto-login to the desktop (the default on Raspberry Pi OS).
 
 ---
 
