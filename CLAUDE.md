@@ -74,8 +74,8 @@ These are the committed reference images — open any `signage-*.png` directly i
 | `config.json` | Runtime configuration: name, quotes, feeds, weather coords, proxy chain. |
 | `office-hours.json` | **Office hours only** — location and weekly schedule. Fetched independently at boot. Edit this for semester changes. |
 | `server.py` | Static file server + `/proxy?url=` CORS proxy endpoint. Replaces `python3 -m http.server`. |
-| `setup.sh` | One-time Raspberry Pi setup: installs deps, syncs NTP, fixes CA certs/fontconfig, wires autostart, reboots. |
-| `start-kiosk.sh` | Pi launcher: starts `server.py`, polls until ready, opens `chromium` in kiosk mode. Called by LXDE autostart on every boot. |
+| `setup.sh` | One-time Raspberry Pi setup: installs deps (including `x11-xserver-utils` for `xset`), waits for NTP sync before updating CA certs, rebuilds font cache, seeds LXDE user autostart from system defaults then appends `start-kiosk.sh`, reboots. |
+| `start-kiosk.sh` | Pi launcher: disables DPMS screen blanking (`xset`), starts `server.py`, polls with a 30s timeout, opens Chromium in kiosk mode with `--no-first-run` and `--password-store=basic`. Called by LXDE autostart on every boot. |
 
 ## Tooling
 
