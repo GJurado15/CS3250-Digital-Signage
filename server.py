@@ -46,6 +46,12 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self.send_error(502, str(exc))
 
+    def log_error(self, fmt, *args):
+        # Chromium sends speculative pre-flight connections that trigger 400 BAD_REQUEST — harmless noise
+        if args and isinstance(args[0], int) and args[0] == 400:
+            return
+        super().log_error(fmt, *args)
+
     def log_message(self, fmt, *args):
         # Only log proxy requests, suppress static file noise
         if "/proxy" in (args[0] if args else ""):

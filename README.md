@@ -117,7 +117,12 @@ cd CS3250-Digital-Signage
 bash setup.sh
 ```
 
-`setup.sh` installs Chromium, fontconfig, and CA certificates; syncs the system clock (fixes SSL issues); and wires `start-kiosk.sh` into LXDE autostart. It reboots automatically after a 5-second countdown.
+`setup.sh` handles everything in one shot:
+- Installs Chromium, fontconfig, font packages (`fonts-liberation`, `fonts-noto-core`), CA certificates, and `x11-xserver-utils`
+- Waits for NTP to actually sync before updating CA certs (a skewed clock causes SSL failures)
+- Rebuilds the font cache (fixes the `Fontconfig: Cannot load default config` error)
+- Seeds the LXDE user autostart from the system defaults so the desktop environment initializes correctly, then appends `start-kiosk.sh`
+- Reboots automatically after a 5-second countdown
 
 After the reboot, the kiosk starts on every boot — no manual steps needed. The Pi must be configured to auto-login to the desktop (the default on Raspberry Pi OS).
 
