@@ -26,6 +26,8 @@ const rssTemplate = document.getElementById("rss-item-template");
 
 const watchThemes = ["watch--sector", "watch--diver", "watch--flieger", "watch--dress", "watch--field", "watch--chrono"];
 
+const rssFallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231a1814'/%3E%3Cpath d='M50 18 L88 82 L12 82 Z' fill='none' stroke='%23c8a848' stroke-width='5' stroke-linejoin='round'/%3E%3Cline x1='50' y1='38' x2='50' y2='60' stroke='%23c8a848' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='72' r='3' fill='%23c8a848'/%3E%3C/svg%3E";
+
 let activeConfig;
 let rssRefreshTimer;
 let rssSlideInterval;
@@ -297,16 +299,20 @@ function renderRssPages(pages, rssConfig) {
       const thumb = node.querySelector(".rss-item__thumb");
       const qrImage = node.querySelector(".rss-item__qr-image");
 
-      if (item.image) {
-        thumb.src = item.image;
-        thumb.alt = item.title;
-        thumb.classList.remove("rss-item__thumb--hidden");
-        node.classList.add("rss-item--has-image");
-        thumb.onerror = () => {
+      thumb.src = item.image || rssFallbackImage;
+      thumb.alt = item.title;
+      thumb.classList.remove("rss-item__thumb--hidden");
+      node.classList.add("rss-item--has-image");
+
+      thumb.onerror = () => {
+        if (thumb.dataset.fallbackApplied) {
           thumb.classList.add("rss-item__thumb--hidden");
           node.classList.remove("rss-item--has-image");
-        };
-      }
+        } else {
+          thumb.dataset.fallbackApplied = "true";
+          thumb.src = rssFallbackImage;
+        }
+      };
 
       if (item.link) {
         node.dataset.link = item.link;
@@ -357,14 +363,8 @@ async function fillOgImages(items, proxyTemplates) {
         const node = rssSlider.querySelector(`[data-link="${CSS.escape(item.link)}"]`);
         if (!node) return;
         const thumb = node.querySelector(".rss-item__thumb");
+        delete thumb.dataset.fallbackApplied;
         thumb.src = image;
-        thumb.alt = item.title;
-        thumb.classList.remove("rss-item__thumb--hidden");
-        node.classList.add("rss-item--has-image");
-        thumb.onerror = () => {
-          thumb.classList.add("rss-item__thumb--hidden");
-          node.classList.remove("rss-item--has-image");
-        };
       })
   );
 }
@@ -578,5 +578,3 @@ function normalizeFeedText(text, minLength = 30) {
   // If what's left is too short to be real content (metadata remnants), discard it
   return cleaned.length < minLength ? "" : cleaned;
 }
-
-

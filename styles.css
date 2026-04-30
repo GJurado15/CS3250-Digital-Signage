@@ -317,20 +317,6 @@ body {
     0 0 0 0.06cqw rgba(200,168,72,0.12);
 }
 
-.quote-card::before {
-  content: "\201C";
-  position: absolute;
-  left: 0.6cqw;
-  top: -0.6cqw;
-  font-size: 7cqw;
-  font-weight: 700;
-  font-family: "Playfair Display", Georgia, serif;
-  line-height: 0.85;
-  color: var(--brass);
-  opacity: 0.22;
-  pointer-events: none;
-}
-
 .quote-card__text {
   margin: 0;
   font-size: 1.95cqw;
@@ -790,6 +776,7 @@ body {
   align-items: stretch;
   overflow: hidden;
   border-bottom: 0.08cqw solid rgba(200,168,72,0.1);
+  border-left: 0.35cqw solid transparent;
   background: transparent;
 }
 
@@ -832,10 +819,6 @@ body {
   border-color: rgba(200,168,72,0.42);
   color: rgba(200,168,72,0.9);
   font-size: 1.05cqw;
-}
-
-.rss-page .rss-item:first-child.rss-item--has-image {
-  grid-template-columns: 21cqw minmax(0, 1fr) 12cqw;
 }
 
 .rss-page .rss-item:first-child .rss-item__body {
