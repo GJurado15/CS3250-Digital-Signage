@@ -1,3 +1,8 @@
 node_modules/
 docs/
 coverage/
+
+# Local OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -206,3 +206,15 @@ AI-assisted work in this session includes:
 - Fixed `npm run docs` (jsdoc): `sourceName?: string` TypeScript optional syntax is not valid in JSDoc type expressions — removed the `?`
 - Corrected `CLAUDE.md`: `chromium-browser` → `chromium` in screenshot loop commands; Lead Story Selection section updated to reflect that `scoreHeadline()` exists in `utils.js` but is not currently wired into the feed pipeline; removed stale bullets from "Things That Work Well"
 - Updated `README.md`: Pi Setup section replaced with `setup.sh` one-liner workflow; corrected headline scoring claim to reflect actual timestamp-sort behavior
+
+---
+
+## Session — April 29, 2026 (file cleanup)
+
+AI-assisted work in this session includes:
+- Audited project assets and runtime references with `rg` before deleting files, including image paths, background references, and stale availability hooks
+- Removed unused `image/background.jpg` after confirming no references to `background.jpg` or the misspelled `backgorund.jpg` remained in the workspace
+- Removed orphaned `availability.json`; the current app no longer fetches availability data, and the availability feature had already been removed from JS/CSS
+- Preserved the six canonical `signage-<theme>.png` reference screenshots because project docs identify them as intentional review artifacts
+- Expanded `.gitignore` with common local OS/editor noise: `.DS_Store`, `Thumbs.db`, and `desktop.ini`
+- Verified cleanup with `npm.cmd run lint`; Jest could not complete in the local environment because dependencies were resolving outside the repo and `@babel/preset-env` was unavailable
