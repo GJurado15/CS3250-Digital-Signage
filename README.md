@@ -143,7 +143,7 @@ The analog clock cycles through 6 vintage watch dial archetypes — one per day,
 
 To force a specific theme during development, add `?theme=diver` (or any theme name) to the URL.
 
-Reference screenshots for all 6 themes are saved as `signage-<name>.png` in the project root.
+Reference screenshots for all 6 themes are saved as `watch themes/signage-<name>.png`.
 
 See `watchcreation.md` for the full technical guide to the dial system.
 

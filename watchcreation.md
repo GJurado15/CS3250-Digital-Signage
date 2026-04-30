@@ -123,16 +123,16 @@ These distinctions prevent themes from looking similar:
 
 ## Screenshot Convention
 
-Canonical screenshots live in the **project root** as `signage-<name>.png` — one file per theme, no other sets. Never commit a second set under a different prefix.
+Canonical screenshots live in `watch themes/` as `signage-<name>.png` — one file per theme, no other sets. Never commit a second set under a different prefix.
 
 | File | Theme |
 |---|---|
-| `signage-sector.png` | Sector / two-tone |
-| `signage-diver.png` | Submariner diver |
-| `signage-flieger.png` | B-Uhr pilot |
-| `signage-dress.png` | Dress watch |
-| `signage-field.png` | Field / military |
-| `signage-chrono.png` | Panda chronograph |
+| `watch themes/signage-sector.png` | Sector / two-tone |
+| `watch themes/signage-diver.png` | Submariner diver |
+| `watch themes/signage-flieger.png` | B-Uhr pilot |
+| `watch themes/signage-dress.png` | Dress watch |
+| `watch themes/signage-field.png` | Field / military |
+| `watch themes/signage-chrono.png` | Panda chronograph |
 
 **For the screenshot command, server setup, and all caveats — see the Screenshot Loop section in `CLAUDE.md`.**
 
@@ -140,7 +140,7 @@ To refresh all 6 canonical screenshots after a CSS change:
 
 ```bash
 for theme in sector diver flieger dress field chrono; do
-  chromium-browser --headless --screenshot=signage-${theme}.png \
+  chromium --headless --screenshot="watch themes/signage-${theme}.png" \
     --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
     "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
 done

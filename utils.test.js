@@ -10,6 +10,7 @@ const {
   describeWeather,
   normalizeRssFeeds,
   normalizeRssProxies,
+  isSafeRssItem,
 } = require("./utils.js");
 
 // ---------------------------------------------------------------------------
@@ -169,6 +170,51 @@ describe("buildQrCodeUrl", () => {
     expect(url).toContain("api.qrserver.com");
     expect(url).toContain("132x132");
     expect(url).toContain(encodeURIComponent("https://example.com/article"));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// isSafeRssItem
+// ---------------------------------------------------------------------------
+describe("isSafeRssItem", () => {
+  test("allows normal technology headlines", () => {
+    const item = {
+      title: "Researchers improve battery recycling",
+      description: "A new process recovers more rare earth metals.",
+      source: "Example"
+    };
+
+    expect(isSafeRssItem(item)).toBe(true);
+  });
+
+  test("blocks NSFW terms in titles", () => {
+    const item = {
+      title: "NSFW forum trend reaches social apps",
+      description: "A platform policy story.",
+      source: "Example"
+    };
+
+    expect(isSafeRssItem(item)).toBe(false);
+  });
+
+  test("blocks configured extra terms in summaries", () => {
+    const item = {
+      title: "Startup launches new app",
+      description: "The product focuses on gambling odds.",
+      source: "Example"
+    };
+
+    expect(isSafeRssItem(item, ["gambling"])).toBe(false);
+  });
+
+  test("matches whole terms without catching unrelated substrings", () => {
+    const item = {
+      title: "Essex researchers publish computing history archive",
+      description: "A university library digitization project.",
+      source: "Example"
+    };
+
+    expect(isSafeRssItem(item)).toBe(true);
   });
 });
 

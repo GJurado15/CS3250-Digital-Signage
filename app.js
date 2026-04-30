@@ -1,7 +1,8 @@
 import {
   summarize, formatFeedDate,
   stripTrailingSource, buildQrCodeUrl,
-  getQuoteDayIndex, describeWeather, normalizeRssFeeds, normalizeRssProxies
+  getQuoteDayIndex, describeWeather, normalizeRssFeeds, normalizeRssProxies,
+  isSafeRssItem
 } from "./utils.js";
 
 const configUrl = "config.json";
@@ -230,9 +231,11 @@ async function loadRss(rssConfig = {}) {
       .map((result) => result.value);
 
     const maxPerFeed = Math.ceil(20 / Math.max(successfulFeeds.length, 1));
+    const blockedTerms = Array.isArray(rssConfig.blockedTerms) ? rssConfig.blockedTerms : [];
     const allItems = successfulFeeds
       .flatMap((feedItems) =>
         feedItems
+          .filter((item) => isSafeRssItem(item, blockedTerms))
           .sort((a, b) => b.timestamp - a.timestamp)
           .slice(0, maxPerFeed)
       )
@@ -240,7 +243,7 @@ async function loadRss(rssConfig = {}) {
       .slice(0, 20);
 
     if (!allItems.length) {
-      renderRssFallback("RSS feeds unavailable. Check the feed URLs or proxy in config.json.");
+      renderRssFallback("No display-safe headlines available. Check the feed settings or blocked terms.");
       return;
     }
 

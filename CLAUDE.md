@@ -48,18 +48,18 @@ Read("/tmp/s.png")
 
 ### Canonical Screenshots
 
-After any polishing loop, regenerate all 6 `signage-<theme>.png` files in the project root so the user can open them immediately to review results:
+After any polishing loop, regenerate all 6 `watch themes/signage-<theme>.png` files so the user can open them immediately to review results:
 
 ```bash
 for theme in sector diver flieger dress field chrono; do
   chromium --headless \
-    --screenshot="signage-${theme}.png" \
+    --screenshot="watch themes/signage-${theme}.png" \
     --window-size=1080,1800 --hide-scrollbars --virtual-time-budget=20000 \
     "http://127.0.0.1:8000/?theme=${theme}" 2>/dev/null
 done
 ```
 
-These are the committed reference images — open any `signage-*.png` directly in your file browser to see the final result for each theme. Always regenerate them at the end of a polish session before reporting work complete.
+These are the committed reference images — open any `watch themes/signage-*.png` directly in your file browser to see the final result for each theme. Always regenerate them at the end of a polish session before reporting work complete.
 
 ---
 
@@ -255,7 +255,7 @@ Open-Meteo API — free, no API key. Coordinates set in `config.json`. Refreshes
 const watchThemes = ["watch--sector","watch--diver","watch--flieger","watch--dress","watch--field","watch--chrono"];
 ```
 
-Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference screenshots live in the project root as `signage-<name>.png`.
+Each theme is a CSS block scoped to `.analog-clock.watch--<name>`. Reference screenshots live in `watch themes/` as `signage-<name>.png`.
 
 **For DOM structure, CSS techniques, visual differentiation rules, and known pitfalls — see `watchcreation.md`.**
 

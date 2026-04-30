@@ -157,6 +157,46 @@ export function buildQrCodeUrl(url) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=132x132&data=${encodeURIComponent(url)}`;
 }
 
+const defaultBlockedRssTerms = [
+  "nsfw", "porn", "pornography", "pornographic", "xxx", "onlyfans",
+  "nude", "nudity", "naked", "erotic", "fetish", "sexual", "sex",
+  "escort", "stripper", "gore", "graphic violence", "beheading",
+  "decapitation", "suicide", "fuck", "shit", "bitch", "asshole"
+];
+
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function termToRegExp(term) {
+  const escaped = escapeRegExp(term.trim()).replace(/\s+/g, "\\s+");
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i");
+}
+
+/**
+ * Checks whether an RSS item is safe for public signage by blocking common
+ * NSFW, profanity, and graphic-content terms in titles and summaries.
+ *
+ * @param {object} item - Normalized RSS item.
+ * @param {string} [item.title]
+ * @param {string} [item.description]
+ * @param {string} [item.source]
+ * @param {string[]} [extraBlockedTerms] - Optional additional blocked terms.
+ * @returns {boolean} True when the item can be displayed.
+ */
+export function isSafeRssItem(item, extraBlockedTerms = []) {
+  const terms = [...defaultBlockedRssTerms, ...extraBlockedTerms]
+    .filter((term) => typeof term === "string" && term.trim());
+
+  const text = [
+    item?.title,
+    item?.description,
+    item?.source
+  ].filter(Boolean).join(" ");
+
+  return !terms.some((term) => termToRegExp(term).test(text));
+}
+
 /**
  * Computes a stable daily index for quote rotation based on the current date
  * in the given timezone. The index changes each calendar day and is consistent

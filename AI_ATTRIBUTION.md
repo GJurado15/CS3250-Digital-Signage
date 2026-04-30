@@ -218,3 +218,16 @@ AI-assisted work in this session includes:
 - Preserved the six canonical `signage-<theme>.png` reference screenshots because project docs identify them as intentional review artifacts
 - Expanded `.gitignore` with common local OS/editor noise: `.DS_Store`, `Thumbs.db`, and `desktop.ini`
 - Verified cleanup with `npm.cmd run lint`; Jest could not complete in the local environment because dependencies were resolving outside the repo and `@babel/preset-env` was unavailable
+
+---
+
+## Session — April 30, 2026 (header polish + RSS sanitization)
+
+AI-assisted work in this session includes:
+- Removed the top-left "Metropolitan State University of Denver" label from the signage top bar
+- Centered and bolded "Department of Computer Science" in the top bar, removing the old divider treatment tied to the two-label layout
+- Added `isSafeRssItem()` to filter RSS headlines, summaries, and sources for NSFW, profanity, and graphic-content terms before items reach the slider
+- Added support for optional `rss.blockedTerms` entries in `config.json` so extra blocked terms can be configured without changing code
+- Added unit coverage for RSS sanitizer allow/block behavior, custom blocked terms, and whole-term matching
+- Cleaned stale screenshot documentation in `README.md`, `CLAUDE.md`, and `watchcreation.md` to point to the tracked `watch themes/signage-<name>.png` files
+- Verified the current JS/CSS changes with `npm.cmd run lint`; Jest remains blocked locally by the missing `@babel/preset-env` dependency resolution issue
